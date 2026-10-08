@@ -1,0 +1,2178 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#9f1239">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Prompt 21+">
+<meta name="description" content="Prompt Builder 21+ — Prompter eksplisit untuk generate gambar AI super realistis.">
+<title>Prompt Builder 21+</title>
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f3f0;
+    --bg-alt: #efece7;
+    --surface: #ffffff;
+    --surface-alt: #fbfaf8;
+    --border: #e5e0d8;
+    --border-strong: #d6cfc3;
+    --text: #1a1a1a;
+    --text-soft: #4a4a4a;
+    --muted: #8a8278;
+    --accent: #9f1239;
+    --accent-hover: #83102f;
+    --accent-soft: #fdf2f4;
+    --accent-border: #f4d3da;
+    --dark-panel: #1a1a1f;
+    --dark-panel-soft: #26262c;
+    --dark-text: #e8e6e3;
+    --dark-muted: #9a958d;
+    --success: #4d7c4d;
+    --success-soft: #eef5ee;
+    --shadow-xs: 0 1px 2px rgba(26,26,26,0.04);
+    --shadow-sm: 0 1px 3px rgba(26,26,26,0.06), 0 1px 2px rgba(26,26,26,0.04);
+    --shadow-md: 0 4px 16px rgba(26,26,26,0.06), 0 1px 3px rgba(26,26,26,0.04);
+    --shadow-lg: 0 12px 32px rgba(26,26,26,0.08), 0 2px 8px rgba(26,26,26,0.04);
+    --ease: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.55;
+    padding: 20px 14px 80px;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 860px; margin: 0 auto; }
+
+  /* Install banner */
+  .install-banner {
+    display: none;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--dark-panel);
+    color: var(--dark-text);
+    padding: 14px 16px;
+    z-index: 9000;
+    box-shadow: 0 -8px 24px rgba(0,0,0,.25);
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .install-banner.show { display: flex; }
+  .install-banner p { flex: 1; font-size: 0.84rem; min-width: 180px; }
+  .install-banner .btn-install {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 9px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .install-banner .btn-dismiss {
+    background: transparent;
+    border: 1px solid #3a3a42;
+    color: var(--dark-muted);
+    padding: 10px 14px;
+    border-radius: 9px;
+    font-size: 0.78rem;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  header {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 22px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow-sm);
+  }
+  .header-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+  .brand-mark {
+    width: 26px; height: 26px; border-radius: 7px;
+    background: linear-gradient(135deg, #9f1239 0%, #4c0519 100%);
+    position: relative; flex-shrink: 0;
+  }
+  .brand-mark::after {
+    content: ''; position: absolute; inset: 6px; border-radius: 3px;
+    border: 1.5px solid rgba(255,255,255,0.55);
+    border-bottom-color: transparent; border-right-color: transparent;
+  }
+  header h1 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 1.4rem; font-weight: 600; letter-spacing: -0.015em; line-height: 1.15;
+  }
+  header h1 em { font-style: normal; color: var(--accent); font-weight: 500; }
+  header .sub { color: var(--muted); font-size: 0.8rem; margin-top: 2px; }
+  .header-actions { display: flex; gap: 8px; flex-shrink: 0; flex-wrap: wrap; }
+  .btn-random, .btn-lang {
+    background: var(--text); color: #fff; border: none;
+    padding: 9px 14px; border-radius: 9px;
+    font-size: 0.76rem; font-weight: 600; cursor: pointer;
+    font-family: inherit; transition: background 160ms var(--ease);
+  }
+  .btn-random:hover { background: var(--accent); }
+  .btn-lang {
+    background: var(--surface); color: var(--text-soft);
+    border: 1px solid var(--border-strong);
+  }
+  .btn-lang:hover { border-color: var(--accent); color: var(--accent); }
+
+  .preset-row {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 14px;
+  }
+  .preset-label {
+    font-size: 0.74rem; font-weight: 600; color: var(--muted); flex-shrink: 0;
+  }
+  #presetSelect {
+    flex: 1; min-width: 180px; max-width: 420px;
+    background: var(--surface); border: 1px solid var(--border-strong);
+    color: var(--text); padding: 10px 36px 10px 12px; border-radius: 9px;
+    font-size: 0.84rem; font-family: inherit; font-weight: 500; cursor: pointer;
+    appearance: none; min-height: 42px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='none' stroke='%238a8278' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round' viewBox='0 0 24 24'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 12px center;
+  }
+  #presetSelect:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(159,18,57,0.09); outline: none;
+  }
+  .btn-clear-all {
+    background: var(--surface); border: 1px solid var(--border-strong);
+    color: #a4483f; padding: 10px 14px; border-radius: 9px;
+    font-size: 0.76rem; font-weight: 600; cursor: pointer; font-family: inherit;
+  }
+  .btn-clear-all:hover { background: #faf0ee; border-color: #d9b8b1; }
+
+  .tabs-wrap {
+    position: relative; margin-bottom: 14px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 6px; box-shadow: var(--shadow-xs);
+  }
+  .tabs {
+    display: flex; flex-wrap: wrap; gap: 4px; overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    background: transparent; border: none; padding: 10px 12px;
+    border-radius: 10px; font-size: 0.76rem; font-weight: 500;
+    color: var(--muted); cursor: pointer; white-space: nowrap;
+    font-family: inherit; min-height: 40px; transition: all 160ms var(--ease);
+  }
+  .tab-btn:hover { color: var(--text-soft); }
+  .tab-btn.active {
+    background: var(--accent-soft); color: var(--accent); font-weight: 600;
+  }
+  .tab-btn .fill-indicator {
+    display: inline-block; width: 4px; height: 4px; border-radius: 50%;
+    background: var(--success); margin-left: 5px; vertical-align: middle;
+    opacity: 0; transition: opacity 200ms var(--ease);
+  }
+  .tab-btn.has-fill .fill-indicator { opacity: 1; }
+
+  .panel { display: none; }
+  .panel.active { display: block; animation: panelIn 220ms var(--ease-out); }
+  @keyframes panelIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 20px 20px 18px; box-shadow: var(--shadow-sm);
+  }
+  .card.nsfw { border-color: var(--accent-border); }
+  .card-header {
+    display: flex; align-items: center; gap: 10px;
+    padding-bottom: 12px; margin-bottom: 16px; border-bottom: 1px solid var(--border);
+  }
+  .card-header h3 {
+    font-family: 'Fraunces', Georgia, serif; font-size: 1.02rem; font-weight: 600;
+  }
+  .badge {
+    font-size: 0.6rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 3px 7px; border-radius: 5px; background: var(--accent-soft);
+    color: var(--accent); border: 1px solid var(--accent-border);
+  }
+  .btn-clear-tab {
+    margin-left: auto; background: transparent; border: 1px solid var(--border);
+    color: var(--muted); padding: 5px 10px; border-radius: 7px;
+    font-size: 0.7rem; font-weight: 600; cursor: pointer; font-family: inherit;
+  }
+  .btn-clear-tab:hover { color: #a4483f; border-color: #d9b8b1; background: #faf0ee; }
+
+  .section-note {
+    font-size: 0.74rem; color: var(--text-soft); background: var(--surface-alt);
+    padding: 9px 12px; border-radius: 8px; margin-bottom: 16px;
+    border-left: 2px solid var(--accent-border); line-height: 1.5;
+  }
+
+  .field { margin-bottom: 14px; }
+  .field:last-child { margin-bottom: 0; }
+  label {
+    display: block; font-size: 0.75rem; font-weight: 600;
+    color: var(--text-soft); margin-bottom: 5px;
+  }
+  label .tag21 { color: var(--accent); font-size: 0.7rem; margin-left: 3px; }
+
+  .search-wrap { position: relative; margin-bottom: 6px; }
+  .search-wrap input {
+    width: 100%; background: var(--surface-alt); border: 1px solid var(--border);
+    padding: 8px 12px 8px 34px; border-radius: 8px; font-size: 0.8rem;
+    font-family: inherit; outline: none;
+  }
+  .search-wrap input:focus { border-color: var(--accent); }
+  .search-wrap::before {
+    content: ''; position: absolute; left: 11px; top: 50%; transform: translateY(-50%);
+    width: 14px; height: 14px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='none' stroke='%238a8278' stroke-width='2' stroke-linecap='round' viewBox='0 0 24 24'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M21 21l-4.3-4.3'/%3E%3C/svg%3E") no-repeat center;
+  }
+
+  select, input[type="text"], textarea {
+    width: 100%; background: var(--surface); border: 1px solid var(--border-strong);
+    color: var(--text); padding: 10px 12px; border-radius: 9px;
+    font-size: 0.84rem; outline: none; min-height: 42px; font-family: inherit;
+    transition: border-color 160ms var(--ease), box-shadow 160ms var(--ease);
+  }
+  select:hover, input[type="text"]:hover, textarea:hover { border-color: #b8ae9f; }
+  select:focus, input[type="text"]:focus, textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(159,18,57,0.09);
+  }
+  select {
+    cursor: pointer; appearance: none; padding-right: 36px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='none' stroke='%238a8278' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round' viewBox='0 0 24 24'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 12px center;
+  }
+  select option.hidden-opt { display: none; }
+  textarea { min-height: 72px; resize: vertical; line-height: 1.5; }
+  input::placeholder, textarea::placeholder { color: #b5aca0; }
+
+  .custom-input { margin-top: 7px; display: none; }
+  .custom-input.show { display: block; animation: slideDown 200ms var(--ease-out); }
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-3px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Negative prompt */
+  .neg-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px; margin-bottom: 12px;
+  }
+  @media (max-width: 520px) { .neg-grid { grid-template-columns: 1fr; } }
+  .neg-item {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 0.8rem; color: var(--text-soft); cursor: pointer; user-select: none;
+  }
+  .neg-item input { width: 16px; height: 16px; accent-color: var(--accent); flex-shrink: 0; }
+
+  .preview-section {
+    margin-top: 14px; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 18px 20px; box-shadow: var(--shadow-md);
+  }
+  .preview-header {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 12px; gap: 10px; flex-wrap: wrap;
+  }
+  .preview-header h3 {
+    font-family: 'Fraunces', Georgia, serif; font-size: 1.02rem; font-weight: 600;
+  }
+  .preview-meta {
+    font-size: 0.68rem; color: var(--muted); font-family: 'JetBrains Mono', monospace;
+    display: flex; gap: 12px;
+  }
+  .preview-box {
+    background: var(--dark-panel); border-radius: 11px; padding: 16px;
+    min-height: 120px; max-height: 300px; overflow-y: auto;
+    scrollbar-width: thin; scrollbar-color: #3a3a42 transparent;
+  }
+  .preview-box pre {
+    white-space: pre-wrap; word-break: break-word;
+    font-family: 'JetBrains Mono', Consolas, monospace;
+    font-size: 0.78rem; line-height: 1.65; color: var(--dark-text);
+  }
+  .preview-box pre.empty { color: var(--dark-muted); font-style: italic; }
+  .preview-actions {
+    display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap;
+  }
+  button.btn {
+    background: var(--text); color: #fff; border: 1px solid var(--text);
+    padding: 11px 16px; border-radius: 9px; font-weight: 600; font-size: 0.78rem;
+    cursor: pointer; flex: 1; min-width: 100px; font-family: inherit;
+    transition: all 160ms var(--ease);
+  }
+  button.btn:hover { background: var(--accent); border-color: var(--accent); }
+  button.btn.copied { background: var(--success); border-color: var(--success); }
+  button.btn-secondary {
+    background: var(--surface); border: 1px solid var(--border-strong); color: var(--text-soft);
+  }
+  button.btn-secondary:hover { background: var(--surface-alt); color: var(--text); }
+  button.btn-danger {
+    background: var(--surface); border: 1px solid var(--border-strong);
+    color: #a4483f; flex: 0 1 auto; min-width: 80px;
+  }
+  button.btn-danger:hover { background: #faf0ee; border-color: #d9b8b1; }
+
+  .tip {
+    font-size: 0.72rem; color: var(--muted); margin-top: 12px;
+    padding-top: 12px; border-top: 1px dashed var(--border); line-height: 1.55;
+  }
+
+  .toast {
+    position: fixed; bottom: 28px; left: 50%;
+    transform: translateX(-50%) translateY(16px);
+    background: var(--text); color: #fff; padding: 11px 20px;
+    border-radius: 11px; font-weight: 600; font-size: 0.78rem;
+    opacity: 0; transition: opacity 220ms var(--ease), transform 220ms var(--ease-out);
+    pointer-events: none; z-index: 100; box-shadow: var(--shadow-lg);
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .install-banner.show ~ .toast { bottom: 90px; }
+
+  /* Age gate */
+  .age-gate {
+    position: fixed; inset: 0; background: rgba(10,8,12,0.93);
+    backdrop-filter: blur(8px); z-index: 9999;
+    display: flex; align-items: center; justify-content: center; padding: 20px;
+  }
+  .age-gate.hidden { display: none; }
+  .age-gate-card {
+    background: var(--surface); border: 1px solid var(--accent-border);
+    border-radius: 18px; padding: 26px 24px 22px; max-width: 440px; width: 100%;
+    box-shadow: var(--shadow-lg); text-align: center;
+  }
+  .age-gate-badge {
+    display: inline-block; background: var(--accent); color: #fff;
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 5px 12px; border-radius: 6px; margin-bottom: 12px;
+  }
+  .age-gate-card h2 {
+    font-family: 'Fraunces', Georgia, serif; font-size: 1.3rem; font-weight: 600; margin-bottom: 8px;
+  }
+  .age-gate-card p { font-size: 0.84rem; color: var(--text-soft); line-height: 1.55; margin-bottom: 14px; }
+  .warning-list {
+    text-align: left; font-size: 0.8rem; color: var(--text-soft);
+    background: var(--accent-soft); border: 1px solid var(--accent-border);
+    border-radius: 10px; padding: 12px 14px; margin-bottom: 16px; line-height: 1.5;
+  }
+  .warning-list li { margin-bottom: 3px; margin-left: 16px; }
+  .age-check {
+    display: flex; align-items: flex-start; gap: 10px; text-align: left;
+    margin-bottom: 16px; cursor: pointer; user-select: none;
+  }
+  .age-check input { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--accent); flex-shrink: 0; }
+  .age-check span { font-size: 0.8rem; color: var(--text); line-height: 1.4; }
+  .btn-enter {
+    width: 100%; background: var(--accent); color: #fff; border: none;
+    padding: 13px 18px; border-radius: 10px; font-size: 0.88rem; font-weight: 600;
+    cursor: pointer; font-family: inherit;
+  }
+  .btn-enter:disabled { opacity: 0.45; cursor: not-allowed; }
+  .btn-enter:not(:disabled):hover { background: var(--accent-hover); }
+  .age-gate-footer { margin-top: 12px; font-size: 0.68rem; color: var(--muted); }
+
+  @media (min-width: 720px) {
+    body { padding: 28px 20px 90px; }
+    header { padding: 24px 26px; }
+    header h1 { font-size: 1.55rem; }
+    .card { padding: 24px 26px 22px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+  button:focus-visible, select:focus-visible, input:focus-visible, textarea:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 2px;
+  }
+</style>
+</head>
+<body>
+
+<!-- AGE GATE -->
+<div class="age-gate" id="ageGate">
+  <div class="age-gate-card">
+    <div class="age-gate-badge">21+ Only</div>
+    <h2 data-i18n="ageTitle">Area Konten Dewasa</h2>
+    <p data-i18n="ageDesc">Prompter ini <strong>khusus untuk konten eksplisit / NSFW</strong> yang super realistis. Semua opsi di dalamnya bersifat dewasa.</p>
+    <ul class="warning-list">
+      <li data-i18n="ageW1">Hanya untuk pengguna berusia <strong>21 tahun ke atas</strong>.</li>
+      <li data-i18n="ageW2">Konten mencakup pose, aksi, dan detail anatomi yang sangat eksplisit.</li>
+      <li data-i18n="ageW3">Pembuat prompter <strong>tidak bertanggung jawab</strong> atas penggunaan atau konsekuensi dari prompt yang dihasilkan.</li>
+      <li data-i18n="ageW4">Pengguna sepenuhnya bertanggung jawab atas prompt yang dibuat dan hasil generate-nya.</li>
+    </ul>
+    <label class="age-check">
+      <input type="checkbox" id="ageCheck" onchange="toggleEnterBtn()">
+      <span data-i18n="ageCheck">Saya berusia 21 tahun atau lebih, memahami bahwa ini adalah konten dewasa eksplisit, dan menerima bahwa segala risiko menjadi tanggung jawab saya sendiri.</span>
+    </label>
+    <button class="btn-enter" id="enterBtn" disabled onclick="enterApp()" data-i18n="ageEnter">Masuk ke Prompt Builder 21+</button>
+    <p class="age-gate-footer" data-i18n="ageFooter">Dengan masuk, Anda menyatakan telah membaca dan menyetujui pernyataan di atas.</p>
+  </div>
+</div>
+
+<div class="container" id="mainApp" style="display:none;">
+
+  <header>
+    <div class="header-top">
+      <div>
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true"></div>
+          <h1>Prompt Builder <em>21+</em></h1>
+        </div>
+        <p class="sub" data-i18n="subtitle">Prompter eksplisit untuk generate gambar AI super realistis. Semua opsi 21+.</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn-lang" id="langBtn" onclick="toggleLang()" title="Language">ID / EN</button>
+        <button class="btn-random" onclick="randomize()" data-i18n="btnRandom">Acak 21+</button>
+      </div>
+    </div>
+    <div class="preset-row">
+      <label class="preset-label" for="presetSelect" data-i18n="presetLabel">Template 21+</label>
+      <select id="presetSelect" onchange="onPresetChange(this)">
+        <option value="">— Pilih template —</option>
+        <optgroup label="Solo Explicit" data-i18n-label="ogSolo">
+          <option value="realistic">Ultra Realistic Nude</option>
+          <option value="seiza">Seiza Nude</option>
+          <option value="cleavage">Cleavage Squeeze</option>
+          <option value="spread">Legs Spread Open</option>
+          <option value="orgasm">Solo Orgasm</option>
+          <option value="selftouch">Self Touch / Masturbate</option>
+          <option value="allfours">All Fours Presenting</option>
+          <option value="tease">Teasing Solo</option>
+        </optgroup>
+        <optgroup label="Couple / Penetration" data-i18n-label="ogCouple">
+          <option value="couple">Missionary Intimate</option>
+          <option value="doggy">Doggy Style Deep</option>
+          <option value="cowgirl">Cowgirl Riding</option>
+          <option value="wall">Wall Pin Standing</option>
+          <option value="pronebone">Prone Bone</option>
+          <option value="matingpress">Mating Press</option>
+        </optgroup>
+        <optgroup label="Oral Focus" data-i18n-label="ogOral">
+          <option value="oral">Blowjob Looking Up</option>
+          <option value="cunnilingus">Cunnilingus</option>
+          <option value="sixtynine">69 Position</option>
+        </optgroup>
+        <optgroup label="Rough / Dom-Sub" data-i18n-label="ogRough">
+          <option value="rough">Rough Doggy</option>
+          <option value="hairpull">Hair Pull Dominant</option>
+          <option value="choke">Light Choke + Intensity</option>
+          <option value="bound">Wrists Pinned</option>
+        </optgroup>
+        <optgroup label="Mood & Afterglow" data-i18n-label="ogMood">
+          <option value="passionate">Passionate French Kiss</option>
+          <option value="softgrab">Soft Breast Grab</option>
+          <option value="bedroom">Bedroom Intimate</option>
+          <option value="afterglow">Afterglow / Spent</option>
+        </optgroup>
+      </select>
+      <button type="button" class="btn-clear-all" onclick="clearAll()" data-i18n="btnClearAll">Bersihkan Semua</button>
+    </div>
+  </header>
+
+  <div class="tabs-wrap">
+    <div class="tabs" role="tablist">
+      <button class="tab-btn active" data-tab="subject" onclick="switchTab(this)"><span data-i18n="tabSubject">Subject</span><span class="fill-indicator"></span></button>
+      <button class="tab-btn" data-tab="face" onclick="switchTab(this)"><span data-i18n="tabFace">Face</span><span class="fill-indicator"></span></button>
+      <button class="tab-btn" data-tab="body" onclick="switchTab(this)"><span data-i18n="tabBody">Body</span><span class="fill-indicator"></span></button>
+      <button class="tab-btn" data-tab="pose" onclick="switchTab(this)"><span data-i18n="tabPose">Pose</span><span class="fill-indicator"></span></button>
+      <button class="tab-btn" data-tab="partner" onclick="switchTab(this)"><span data-i18n="tabPartner">Partner</span><span class="fill-indicator"></span></button>
+      <button class="tab-btn" data-tab="action" onclick="switchTab(this)"><span data-i18n="tabAction">Aksi</span><span class="fill-indicator"></span></button>
+      <button class="tab-btn" data-tab="setting" onclick="switchTab(this)"><span data-i18n="tabSetting">Setting</span><span class="fill-indicator"></span></button>
+      <button class="tab-btn" data-tab="light" onclick="switchTab(this)"><span data-i18n="tabLight">Light</span><span class="fill-indicator"></span></button>
+      <button class="tab-btn" data-tab="negative" onclick="switchTab(this)"><span data-i18n="tabNeg">Negative</span><span class="fill-indicator"></span></button>
+    </div>
+  </div>
+
+  <!-- SUBJECT -->
+  <div class="panel active" id="panel-subject">
+    <div class="card">
+      <div class="card-header">
+        <h3 data-i18n="hSubject">Subject</h3>
+        <span class="badge">21+</span>
+        <button class="btn-clear-tab" onclick="clearTab('subject')" data-i18n="btnClearTab">Bersihkan tab</button>
+      </div>
+      <div class="field">
+        <label data-i18n="lbEthnicity">Etnisitas</label>
+        <div class="search-wrap"><input type="text" class="opt-search" data-for="ethnicity" placeholder="Cari..." oninput="filterOptions(this)"></div>
+        <select id="ethnicity" onchange="toggleCustom(this); buildPrompt()">
+          <option value="">—</option>
+          <option>Caucasian / White</option>
+          <option>East Asian (Japanese/Korean/Chinese)</option>
+          <option>Southeast Asian (Indonesian/Thai/Vietnamese)</option>
+          <option>South Asian / Indian</option>
+          <option>Middle Eastern / Arab</option>
+          <option>Latina / Hispanic</option>
+          <option>Black / African</option>
+          <option>Mixed / Eurasian</option>
+          <option value="__custom__">Custom...</option>
+        </select>
+        <input type="text" class="custom-input" id="ethnicity_custom" placeholder="Custom..." oninput="buildPrompt()">
+      </div>
+      <div class="field">
+        <label data-i18n="lbAge">Usia</label>
+        <select id="age" onchange="toggleCustom(this); buildPrompt()">
+          <option value="">—</option>
+          <option>early 20s</option>
+          <option>mid 20s</option>
+          <option>late 20s</option>
+          <option>early 30s</option>
+          <option value="__custom__">Custom...</option>
+        </select>
+        <input type="text" class="custom-input" id="age_custom" placeholder="Custom..." oninput="buildPrompt()">
+      </div>
+      <div class="field">
+        <label data-i18n="lbGender">Gender</label>
+        <select id="gender" onchange="toggleCustom(this); buildPrompt()">
+          <option value="woman">Woman</option>
+          <option value="man">Man</option>
+          <option value="__custom__">Custom...</option>
+        </select>
+        <input type="text" class="custom-input" id="gender_custom" placeholder="Custom..." oninput="buildPrompt()">
+      </div>
+    </div>
+  </div>
+
+  <!-- FACE -->
+  <div class="panel" id="panel-face">
+    <div class="card">
+      <div class="card-header">
+        <h3 data-i18n="hFace">Face & Expression</h3>
+        <span class="badge">21+</span>
+        <button class="btn-clear-tab" onclick="clearTab('face')" data-i18n="btnClearTab">Bersihkan tab</button>
+      </div>
+      <div class="field">
+        <label data-i18n="lbSkin">Kulit</label>
+        <div class="search-wrap"><input type="text" class="opt-search" data-for="skin" placeholder="Cari..." oninput="filterOptions(this)"></div>
+        <select id="skin" onchange="toggleCustom(this); buildPrompt()">
+          <option value="">—</option>
+          <option>porcelain-fair creamy skin with soft natural flush on cheeks and chest</option>
+          <option>fair skin with light freckles and rosy cheeks</option>
+          <option>light olive skin with warm undertone and soft glow</option>
+          <option>medium tan skin with golden undertone</option>
+          <option>deep bronze skin with rich warm glow</option>
+          <option value="__custom__">Custom...</option>
+        </select>
+        <input type="text" class="custom-input" id="skin_custom" placeholder="Custom..." oninput="buildPrompt()">
+      </div>
+      <div class="field">
+        <label data-i18n="lbHair">Rambut</label>
+        <div class="search-wrap"><input type="text" class="opt-search" data-for="hair" placeholder="Cari..." oninput="filterOptions(this)"></div>
+        <select id="hair" onchange="toggleCustom(this); buildPrompt()">
+          <option value="">—</option>
+          <option>long silky wavy honey-blonde hair cascading over her shoulders and draping across one breast</option>
+          <option>long straight raven-black hair flowing down her back</option>
+          <option>shoulder-length wavy chestnut brown hair</option>
+          <option>long voluminous curly red hair</option>
+          <option>long platinum blonde hair with soft waves</option>
+          <option>messy sex-hair, slightly damp and tousled</option>
+          <option>wet look long hair clinging to skin and breasts</option>
+          <option value="__custom__">Custom...</option>
+        </select>
+        <input type="text" class="custom-input" id="hair_custom" placeholder="Custom..." oninput="buildPrompt()">
+      </div>
+      <div class="field">
+        <label data-i18n="lbEyes">Mata</label>
+        <div class="search-wrap"><input type="text" class="opt-search" data-for="eyes" placeholder="Cari..." oninput="filterOptions(this)"></div>
+        <select id="eyes" onchange="toggleCustom(this); buildPrompt()">
+          <option value="">—</option>
+          <option>piercing blue-green eyes with long thick lashes and a glassy intimate gaze</option>
+          <option>deep brown eyes with soft seductive heavy-lidded look</option>
+          <option>bright emerald eyes looking up with pure lust</option>
+          <option>ice-blue eyes half-closed in pleasure</option>
+          <option>warm amber eyes rolling back slightly from pleasure</option>
+          <option>dark smoky eyes locked on the viewer with hunger</option>
+          <option value="__custom__">Custom...</option>
+        </select>
+        <input type="text" class="custom-input" id="eyes_custom" placeholder="Custom..." oninput="buildPrompt()">
+      </div>
+      <div class="field">
+        <label data-i18n="lbLips">Bibir & Ekspresi <span class="tag21">21+</span></label>
+        <div class="search-wrap"><input type="text" class="opt-search" data-for="lips" placeholder="Cari..." oninput="filterOptions(this)"></div>
+        <select id="lips" onchange="toggleCustom(this); buildPrompt()">
+          <option value="">—</option>
+          <option>full plump soft lips slightly parted in a subtle teasing smile</option>
+          <option>lips parted, tongue tip visible, pure arousal expression</option>
+          <option>mouth open in a silent moan, eyes half-closed</option>
+          <option>biting lower lip hard, trying to hold back a moan</option>
+          <option>lips wet and shiny, slightly swollen from kissing</option>
+          <option>seductive half-smile with heavy-lidded bedroom eyes</option>
+          <option>O-shaped mouth as if gasping in pleasure</option>
+          <option>tongue out slightly, playful and slutty expression</option>
+          <option value="__custom__">Custom...</option>
+        </select>
+        <input type="text" class="custom-input" id="lips_custom" placeholder="Custom..." oninput="buildPrompt()">
+      </div>
+    </div>
+  </div>
+
+  <!-- BODY -->
+  <div class="panel" id="panel-body">
+    <div class="card">
+      <div class="card-header">
+        <h3 data-i18n="hBody">Body</h3>
+        <span class="badge">21+</span>
+        <button class="btn-clear-tab" onclick="clearTab('body')" data-i18n="btnClearTab">Bersihkan tab</button>
+      </div>
+      <div class="field">
+        <label data-i18n="lbBodyType">Body Type</label>
+        <select id="bodytype" onchange="toggleCustom(this); buildPrompt()">
+          <option value="">—</option>
+          <option>perfect voluptuous hourglass figure</option>
+          <option>slim athletic figure with toned muscles</option>
+          <option>curvy and soft full-figured body</option>
+          <option>petite and delicate frame</option>
+          <option>tall elegant willowy figure</option>
+          <option value="__custom__">Custom...</option>
+        </select>
+        <input type="text" class="custom-input" id="bodytype_custom" placeholder="Custom..." oninput="buildPrompt()">
+      </div>
+      <div class="field">
+        <label data-i18n="lbBreasts">Breasts</label>
+        <div class="search-wrap"><input type="text" class="opt-search" data-for="breasts" placeholder="Cari..." oninput="filterOptions(this)"></div>
+        <select id="breasts" onchange="toggleCustom(this); buildPrompt()">
+          <option value="">—</option>
+          <option>medium-firm and naturally perky 34C breasts with soft realistic shape and subtle weight</option>
+          <option>large full heavy breasts (DD) with natural soft hang and deep cleavage</option>
+          <option>small perky A-cup breasts</option>
+          <option>medium B-cup breasts with gentle slope</option>
+          <option>very large and heavy breasts with deep inviting cleavage</option>
+          <option>breasts pressed together creating extreme cleavage</option>
+          <option value="__custom__">Custom...</option>
+        </select>
+        <input type="text" class="custom-input" id="breasts_custom" placeholder="Custom..." oninput="buildPrompt()">
+      </div>
+      <div class="field">
+        <label data-i18n="lbWaist">Waist & Hips</label>
+        <select id="waist" onchange="toggleCustom(this); buildPrompt()">
+          <option value="">—</option>
+          <option>extremely narrow waist that flares into wide feminine hips</option>
+          <option>slim waist with moderate feminine hips</option>
+          <option>soft thick waist with very wide hips</option>
+          <option>athletic narrow waist and hips</option>
+          <option value="__custom__">Custom...</option>
+        </select>
+        <input type="text" class="custom-input" id="waist_custom" placeholder="Custom..." oninput="buildPrompt()">
+      </div>
+      <div class="field">
+        <label data-i18n="lbThighs">Thighs & Butt</label>
+        <select id="thighs" onchange="toggleCustom(this); buildPrompt()">
+          <option value="">—</option>
+          <option>thick soft plush thighs and a round firm inviting butt</option>
+          <option>toned athletic thighs and firm round butt</option>
+          <option>soft thick thighs and large plump butt</option>
+          <option>slender thighs and small firm butt</option>
+          <option value="__custom__">Custom...</option>
+        </select>
+        <input type="text" class="custom-input" id="thighs_custom" placeholder="Custom..." oninput="buildPrompt()">
+      </div>
+    </div>
+  </div>
+
+  <!-- POSE -->
+  <div class="panel" id="panel-pose">
+    <div class="card nsfw">
+      <div class="card-header">
+        <h3 data-i18n="hPose">Pose, Tangan & Kaki</h3>
+        <span class="badge">21+</span>
+        <button class="btn-clear-tab" onclick="clearTab('pose')" data-i18n="btnClearTab">Bersihkan tab</button>
+      </div>
+      <div class="section-note" data-i18n="notePose">Semua opsi di sini bersifat eksplisit 21+. Pilih pose, tangan, dan kaki untuk detail super realistis.</div>
+      <div class="field">
+        <label data-i18n="lbPose">Pose Utama</label>
+        <div class="search-wrap"><input type="text" class="opt-search" data-for="pose" placeholder="Cari..." oninput="filterOptions(this)"></div>
+        <select id="pose" onchange="toggleCustom(this); buildPrompt()">
+          <option value="">—</option>
+          <optgroup label="Kneeling / Seiza">
+            <option>kneeling in a perfect seiza pose</option>
+            <option>kneeling upright on both knees</option>
+            <option>kneeling with legs spread, leaning forward on her hands</option>
+          </optgroup>
+          <optgroup label="Sitting">
+            <option>sitting on the edge of a bed with legs slightly open</option>
+            <option>sitting cross-legged on the floor</option>
+            <option>sitting with one leg bent and one extended</option>
+          </optgroup>
+          <optgroup label="Lying">
+            <option>lying on her back with legs bent</option>
+            <option>lying on her side, one leg raised</option>
+            <option>lying on her stomach, ass raised slightly</option>
+          </optgroup>
+          <optgroup label="All Fours / Bent">
+            <option>on all fours, back arched</option>
+            <option>bent over, hands on knees</option>
+            <option>leaning forward against a wall, ass pushed out</option>
+          </optgroup>
+          <optgroup label="Standing / Other">
+            <option>standing, legs slightly apart</option>
+            <option>squatting low, knees wide open</option>
+            <option>standing with weight on one leg</option>
+          </optgroup>
+          <option value="__custom__">Custom...</option>
+        </select>
+        <input type="text" class="custom-input" id="pose_custom" placeholder="Custom pose..." oninput="buildPrompt()">
+      </div>
+      <div class="field">
+        <label data-i18n="lbHands">Posisi Tangan <span class="tag21">21+</span></label>
+        <div class="search-wrap"><input type="text" class="opt-search" data-for="hands" placeholder="Cari..." oninput="filterOptions(this)"></div>
+        <select id="hands" onchange="toggleCustom(this); buildPrompt()">
+          <option value="">—</option>
+          <optgroup label="Neutral / Soft">
+            <option>both hands rest flat on the floor in front of her</option>
+            <option>both hands resting gently on her thighs</option>
+            <option>both hands behind her back</option>
+            <option>one hand on the floor supporting her, the other resting on her thigh</option>
+            <option>one hand extended toward the viewer invitingly</option>
+          </optgroup>
+          <optgroup label="Soft Squeeze / Grab">
+            <option>both hands softly cupping her breasts, gentle squeeze</option>
+            <option>one hand softly squeezing her breast, the other lightly teasing her nipple</option>
+            <option>hands gently pressing her breasts together, soft cleavage</option>
+            <option>one hand sliding under her breast, lifting it gently</option>
+            <option>one hand softly grabbing her hip, the other on her waist</option>
+          </optgroup>
+          <optgroup label="Firm / Passionate">
+            <option>both hands firmly cupping and squeezing her breasts, pushing them together</option>
+            <option>one hand firmly squeezing her breast, fingers digging slightly into soft flesh</option>
+            <option>hands gripping her waist tightly with passionate intensity</option>
+            <option>one hand grabbing her ass firmly, the other on her breast</option>
+            <option>strong grip on her hips, fingers pressing into skin</option>
+          </optgroup>
+          <optgroup label="Rough / Dominant">
+            <option>rough hands squeezing her breasts hard, possessive grip</option>
+            <option>one hand roughly grabbing her hair, the other on her body</option>
+            <option>hands gripping the sheets tightly, knuckles white from intensity</option>
+            <option>both wrists pinned above her head as if held down</option>
+            <option>rough grip on her throat (light), other hand on her hip</option>
+          </optgroup>
+          <optgroup label="Self-touch / Explicit">
+            <option>one hand between her legs, fingers pressing against her pussy</option>
+            <option>two fingers spreading her pussy lips open for the viewer</option>
+            <option>one hand rubbing her clit in slow circles</option>
+            <option>fingers sliding inside herself, other hand on her breast</option>
+            <option>both hands spreading her legs open invitingly</option>
+            <option>both hands gripping and spreading her own ass cheeks</option>
+            <option>hands pulling her panties aside</option>
+          </optgroup>
+          <option value="__custom__">Custom...</option>
+        </select>
+        <input type="text" class="custom-input" id="hands_custom" placeholder="Custom..." oninput="buildPrompt()">
+      </div>
+      <div class="field">
+        <label data-i18n="lbLegs">Posisi Kaki <span class="tag21">21+</span></label>
+        <div class="search-wrap"><input type="text" class="opt-search" data-for="legs" placeholder="Cari..." oninput="filterOptions(this)"></div>
+        <select id="legs" onchange="toggleCustom(this); buildPrompt()">
+          <option value="">—</option>
+          <optgroup label="Closed / Soft">
+            <option>both knees planted on the floor, buttocks on her heels, thighs pressed close</option>
+            <option>legs tightly closed, thighs squeezed together</option>
+            <option>ankles crossed, knees slightly apart</option>
+          </optgroup>
+          <optgroup label="Teasing / Slightly Open">
+            <option>legs spread slightly apart, giving a teasing view</option>
+            <option>knees wide apart while sitting, feet flat on the floor</option>
+            <option>one foot planted, the other leg bent with knee pulled toward chest</option>
+          </optgroup>
+          <optgroup label="Wide Open / Explicit">
+            <option>legs spread wide open, fully exposing herself to the viewer</option>
+            <option>one leg raised high, the other bent, fully exposed</option>
+            <option>legs in a wide V shape, pointing toward the camera</option>
+            <option>lying on her back, legs raised and held open by her hands</option>
+            <option>lying on her back, legs bent and spread, feet flat</option>
+          </optgroup>
+          <optgroup label="All Fours / Presented">
+            <option>on all fours, knees wide, back arched, ass presented to the viewer</option>
+            <option>kneeling with legs spread, leaning forward on her hands</option>
+            <option>lying on her side, top leg raised high in the air</option>
+            <option>squatting with thighs fully open</option>
+          </optgroup>
+          <option value="__custom__">Custom...</option>
+        </select>
+        <input type="text" class="custom-input" id="legs_custom" placeholder="Custom..." oninput="buildPrompt()">
+      </div>
+      <div class="field">
+        <label data-i18n="lbTorso">Torso & Gaze</label>
+        <select id="torso" onchange="toggleCustom(this); buildPrompt()">
+          <option value="">—</option>
+          <option>torso upright with subtle arch in lower back, chest pushed forward toward the viewer</option>
+          <option>torso leaning forward, creating deeper cleavage and inviting posture</option>
+          <option>back strongly arched, breasts thrust out, looking at the viewer over her shoulder</option>
+          <option>lying back, chest rising with heavy breathing, eyes locked on viewer</option>
+          <option>head tilted back in pleasure, throat exposed, eyes half-closed</option>
+          <option>looking directly at the viewer with pure lust, slightly biting her lip</option>
+          <option value="__custom__">Custom...</option>
+        </select>
+        <input type="text" class="custom-input" id="torso_custom" placeholder="Custom..." oninput="buildPrompt()">
+      </div>
+    </div>
+  </div>
+
+  <!-- PARTNER -->
+  <div class="panel" id="panel-partner">
+    <div class="card nsfw">
+      <div class="card-header">
+        <h3 data-i18n="hPartner">Pasangan</h3>
+        <span class="badge">21+</span>
+        <button class="btn-clear-tab" onclick="clearTab('partner')" data-i18n="btnClearTab">Bersihkan tab</button>
+      </div>
+      <div class="section-note" data-i18n="notePartner">Kosongkan jika ingin subjek solo.</div>
+      <div class="field">
+        <label data-i18n="lbHasPartner">Ada Pasangan?</label>
+        <select id="haspartner" onchange="toggleCustom(this); buildPrompt()">
+          <option value="">Solo (tanpa pasangan)</option>
+          <option>with a male partner</option>
+          <option>with a female partner</option>
+          <option>with two partners (threesome)</option>
+          <option value="__custom__">Custom...</option>
+        </select>
+        <input type="text" class="custom-input" id="haspartner_custom" placeholder="Custom..." oninput="buildPrompt()">
+      </div>
+      <div class="field">
+        <label data-i18n="lbPartnerDesc">Deskripsi Pasangan</label>
+        <div class="search-wrap"><input type="text" class="opt-search" data-for="partnerdesc" placeholder="Cari..." oninput="filterOptions(this)"></div>
+        <select id="partnerdesc" onchange="toggleCustom(this); buildPrompt()">
+          <option value="">—</option>
+          <option>a handsome muscular man in his late 20s with short dark hair and strong jawline</option>
+          <option>a tall athletic man with broad shoulders and arm tattoos</option>
+          <option>a fit man with short blonde hair and intense hungry eyes</option>
+          <option>an older dominant man in his 40s with salt-and-pepper hair</option>
+          <option>a beautiful young woman with long dark hair and soft full lips</option>
+          <option>a slim elegant woman with sharp features</option>
+          <option value="__custom__">Custom...</option>
+        </select>
+        <input type="text" class="custom-input" id="partnerdesc_custom" placeholder="Custom..." oninput="buildPrompt()">
+      </div>
+      <div class="field">
+        <label data-i18n="lbPartnerPos">Posisi Pasangan</label>
+        <div class="search-wrap"><input type="text" class="opt-search" data-for="partnerpos" placeholder="Cari..." oninput="filterOptions(this)"></div>
+        <select id="partnerpos" onchange="toggleCustom(this); buildPrompt()">
+          <option value="">—</option>
+          <option>standing behind her, pressing his body against her back</option>
+          <option>kneeling between her spread legs</option>
+          <option>lying on top of her, looking down into her eyes</option>
+          <option>beneath her while she straddles him</option>
+          <option>behind her while she is on all fours</option>
+          <option>standing in front of her while she kneels</option>
+          <option>sitting behind her, one hand on her breast, the other between her legs</option>
+          <option>holding her legs open while going down on her</option>
+          <option value="__custom__">Custom...</option>
+        </select>
+        <input type="text" class="custom-input" id="partnerpos_custom" placeholder="Custom..." oninput="buildPrompt()">
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTION -->
+  <div class="panel" id="panel-action">
+    <div class="card nsfw">
+      <div class="card-header">
+        <h3 data-i18n="hAction">Aksi Seksual</h3>
+        <span class="badge">21+</span>
+        <button class="btn-clear-tab" onclick="clearTab('action')" data-i18n="btnClearTab">Bersihkan tab</button>
+      </div>
+      <div class="section-note" data-i18n="noteAction">Pilih aksi seksual eksplisit. Kombinasikan dengan Pose & Partner untuk hasil paling realistis.</div>
+      <div class="field">
+        <label data-i18n="lbInteraction">Interaksi / Kissing</label>
+        <div class="search-wrap"><input type="text" class="opt-search" data-for="interaction" placeholder="Cari..." oninput="filterOptions(this)"></div>
+        <select id="interaction" onchange="toggleCustom(this); buildPrompt()">
+          <option value="">—</option>
+          <optgroup label="Kissing">
+            <option>kissing passionately with visible tongue</option>
+            <option>deep French kiss, saliva slightly visible</option>
+            <option>soft tender kisses on the lips and jaw</option>
+          </optgroup>
+          <optgroup label="Neck / Body">
+            <option>partner kissing and sucking her neck, leaving marks</option>
+            <option>partner licking and sucking her nipples</option>
+            <option>she is kissing down his chest and stomach</option>
+            <option>partner biting her shoulder softly while holding her</option>
+          </optgroup>
+          <optgroup label="Grab / Hold">
+            <option>partner holding her face while kissing her deeply</option>
+            <option>strong arms wrapped tightly around her body</option>
+            <option>partner pinning her wrists while kissing her</option>
+          </optgroup>
+          <option value="__custom__">Custom...</option>
+        </select>
+        <input type="text" class="custom-input" id="interaction_custom" placeholder="Custom..." oninput="buildPrompt()">
+      </div>
+      <div class="field">
+        <label data-i18n="lbSexAct">Aksi Utama</label>
+        <div class="search-wrap"><input type="text" class="opt-search" data-for="sexact" placeholder="Cari..." oninput="filterOptions(this)"></div>
+        <select id="sexact" onchange="toggleCustom(this); buildPrompt()">
+          <option value="">—</option>
+          <optgroup label="Oral">
+            <option>partner performing oral sex on her, her head tilted back in pure pleasure</option>
+            <option>she is on her knees giving him oral sex, looking up with teary eyes</option>
+            <option>69 position, both giving oral at the same time</option>
+            <option>deepthroat, her nose pressed against his abdomen</option>
+            <option>she is licking and sucking the tip, tongue swirling</option>
+            <option>partner eating her out from behind while she is on all fours</option>
+          </optgroup>
+          <optgroup label="Penetration">
+            <option>missionary, her legs wrapped tightly around his waist</option>
+            <option>doggy style, she is on all fours while he thrusts from behind</option>
+            <option>cowgirl, she is on top riding him, breasts bouncing</option>
+            <option>reverse cowgirl, looking back over her shoulder</option>
+            <option>he is holding her up against the wall while penetrating her</option>
+            <option>prone bone, she is lying flat on her stomach while he enters from behind</option>
+            <option>mating press, legs pinned back, deep passionate penetration</option>
+            <option>standing doggy, she bent over a table while he thrusts</option>
+            <option>spooning, slow deep penetration from behind</option>
+          </optgroup>
+          <optgroup label="Hands / Fingers / Toy">
+            <option>she is being fingered deeply, back arched</option>
+            <option>she is using a toy on herself, fully inserted</option>
+            <option>partner's fingers inside her while kissing her neck</option>
+            <option>she is straddling a pillow, grinding hard for friction</option>
+          </optgroup>
+          <optgroup label="Female / Other">
+            <option>scissoring with female partner, legs intertwined</option>
+            <option>tribbing, grinding against each other with intense friction</option>
+            <option>female partner fingering her while kissing</option>
+          </optgroup>
+          <option value="__custom__">Custom...</option>
+        </select>
+        <input type="text" class="custom-input" id="sexact_custom" placeholder="Custom..." oninput="buildPrompt()">
+      </div>
+      <div class="field">
+        <label data-i18n="lbIntensity">Intensitas</label>
+        <select id="intensity" onchange="toggleCustom(this); buildPrompt()">
+          <option value="">—</option>
+          <optgroup label="Passionate">
+            <option>passionate and intense, heavy breathing and soft moans</option>
+            <option>hungry and eager, desperate for more contact</option>
+            <option>slow and deep, savoring every movement</option>
+          </optgroup>
+          <optgroup label="Rough / Dominant">
+            <option>raw and rough, strong grip marks on her skin</option>
+            <option>dominant and controlling, firm hands and commanding presence</option>
+            <option>forceful and intense, bodies colliding with urgency</option>
+            <option>hard and deep, pounding rhythm, skin slapping</option>
+          </optgroup>
+          <optgroup label="Overwhelmed / Submissive">
+            <option>completely overwhelmed by pleasure, eyes rolled back</option>
+            <option>submissive and obedient, looking up for approval</option>
+            <option>trembling and overstimulated, barely able to hold herself up</option>
+            <option>tears of pleasure in her eyes, body shaking</option>
+          </optgroup>
+          <optgroup label="Afterglow">
+            <option>spent and glowing after climax, soft satisfied smile</option>
+            <option>panting, skin flushed and glistening with sweat</option>
+          </optgroup>
+          <optgroup label="Playful">
+            <option>playful and teasing, she is smirking while touching herself</option>
+            <option>mischievous and coy, enjoying the attention</option>
+          </optgroup>
+          <option value="__custom__">Custom...</option>
+        </select>
+        <input type="text" class="custom-input" id="intensity_custom" placeholder="Custom..." oninput="buildPrompt()">
+      </div>
+      <div class="field">
+        <label data-i18n="lbAnatomy">Detail Anatomi <span class="tag21">sangat eksplisit</span></label>
+        <div class="search-wrap"><input type="text" class="opt-search" data-for="anatomy" placeholder="Cari..." oninput="filterOptions(this)"></div>
+        <select id="anatomy" onchange="toggleCustom(this); buildPrompt()">
+          <option value="">—</option>
+          <optgroup label="Female Anatomy">
+            <option>detailed realistic wet pussy, natural juices visible, labia slightly parted</option>
+            <option>detailed wet folds, aroused and swollen labia, glistening juices</option>
+            <option>pussy lips spread open, inner pink visible, heavy wetness dripping</option>
+            <option>clitoris swollen and prominent, highly aroused</option>
+            <option>vaginal opening stretched, detailed texture, natural lubrication</option>
+            <option>asshole slightly visible while cheeks are spread</option>
+            <option>detailed anus and perineum, soft and realistic</option>
+          </optgroup>
+          <optgroup label="Male Anatomy">
+            <option>erect penis clearly visible, realistic veins, glistening tip</option>
+            <option>thick erect cock with detailed veins and shiny precum at the tip</option>
+            <option>fully hard penis, heavy balls, realistic skin texture</option>
+          </optgroup>
+          <optgroup label="Penetration Detail">
+            <option>vaginal penetration fully visible, stretching detail, wetness on shaft</option>
+            <option>deep penetration, cock buried to the hilt, stretched labia around shaft</option>
+            <option>shallow penetration, tip just entering, detailed contact</option>
+            <option>oral contact detailed, tongue and lips around the shaft, saliva strings</option>
+            <option>deepthroat detail, lips stretched around the base, tears in eyes</option>
+          </optgroup>
+          <optgroup label="Arousal & Fluids">
+            <option>nipples hard and erect, breasts glistening with sweat</option>
+            <option>body covered in a light sheen of sweat, skin flushed, post-orgasm glow</option>
+            <option>heavy natural juices running down her thighs</option>
+            <option>creampie, thick cum leaking from her pussy</option>
+            <option>cum on her face and tongue, messy</option>
+            <option>cum on her breasts and stomach</option>
+            <option>cum dripping from her open mouth</option>
+          </optgroup>
+          <option value="__custom__">Custom...</option>
+        </select>
+        <input type="text" class="custom-input" id="anatomy_custom" placeholder="Custom anatomy detail..." oninput="buildPrompt()">
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTING -->
+  <div class="panel" id="panel-setting">
+    <div class="card">
+      <div class="card-header">
+        <h3 data-i18n="hSetting">Clothing & Background</h3>
+        <span class="badge">21+</span>
+        <button class="btn-clear-tab" onclick="clearTab('setting')" data-i18n="btnClearTab">Bersihkan tab</button>
+      </div>
+      <div class="field">
+        <label data-i18n="lbClothing">Pakaian</label>
+        <div class="search-wrap"><input type="text" class="opt-search" data-for="clothing" placeholder="Cari..." oninput="filterOptions(this)"></div>
+        <select id="clothing" onchange="toggleCustom(this); buildPrompt()">
+          <option value="">—</option>
+          <option>completely nude</option>
+          <option>completely nude except for thigh-high stockings</option>
+          <option>wearing only sheer lingerie pulled to the side</option>
+          <option>wearing an open unbuttoned shirt, nothing underneath</option>
+          <option>lingerie half-removed, one breast fully exposed</option>
+          <option>skirt hiked up around her waist, no panties</option>
+          <option>panties pulled down to her thighs</option>
+          <option>panties pulled aside, exposing her pussy</option>
+          <option>wet clothes clinging tightly to every curve</option>
+          <option>only wearing a collar and nothing else</option>
+          <option>bra pulled down under her breasts, panties off</option>
+          <option value="__custom__">Custom...</option>
+        </select>
+        <input type="text" class="custom-input" id="clothing_custom" placeholder="Custom..." oninput="buildPrompt()">
+      </div>
+      <div class="field">
+        <label data-i18n="lbBackground">Background</label>
+        <select id="background" onchange="toggleCustom(this); buildPrompt()">
+          <option value="">—</option>
+          <option>on a clean white surface</option>
+          <option>on a soft bed with messy white sheets</option>
+          <option>in a dimly lit bedroom with warm lamps</option>
+          <option>against a wall in a modern apartment</option>
+          <option>on a wooden floor</option>
+          <option>in a luxurious hotel room at night</option>
+          <option>against a plain dark background</option>
+          <option value="__custom__">Custom...</option>
+        </select>
+        <input type="text" class="custom-input" id="background_custom" placeholder="Custom..." oninput="buildPrompt()">
+      </div>
+    </div>
+  </div>
+
+  <!-- LIGHT -->
+  <div class="panel" id="panel-light">
+    <div class="card">
+      <div class="card-header">
+        <h3 data-i18n="hLight">Lighting & Camera</h3>
+        <span class="badge">21+</span>
+        <button class="btn-clear-tab" onclick="clearTab('light')" data-i18n="btnClearTab">Bersihkan tab</button>
+      </div>
+      <div class="field">
+        <label data-i18n="lbLighting">Lighting</label>
+        <div class="search-wrap"><input type="text" class="opt-search" data-for="lighting" placeholder="Cari..." oninput="filterOptions(this)"></div>
+        <select id="lighting" onchange="toggleCustom(this); buildPrompt()">
+          <option value="">—</option>
+          <option>Soft cinematic lighting from slightly above and in front, gentle highlights tracing her curves and cleavage</option>
+          <option>Soft natural window light from the side, delicate skin highlights</option>
+          <option>Warm golden hour light with soft rim light on her body</option>
+          <option>Dim moody bedroom lighting, warm and intimate</option>
+          <option>Dramatic low-key lighting with deep shadows on skin</option>
+          <option>Studio softbox, clean even light</option>
+          <option>Ultra-realistic photographic lighting with natural falloff and subtle ambient occlusion</option>
+          <option value="__custom__">Custom...</option>
+        </select>
+        <input type="text" class="custom-input" id="lighting_custom" placeholder="Custom..." oninput="buildPrompt()">
+      </div>
+      <div class="field">
+        <label data-i18n="lbCamera">Camera</label>
+        <div class="search-wrap"><input type="text" class="opt-search" data-for="camera" placeholder="Cari..." oninput="filterOptions(this)"></div>
+        <select id="camera" onchange="toggleCustom(this); buildPrompt()">
+          <option value="">—</option>
+          <option>intimate full-body from a slightly low angle emphasizing figure and eye contact</option>
+          <option>close-up upper body focusing on face, breasts and expression</option>
+          <option>medium shot showing full bodies interacting</option>
+          <option>point-of-view shot as if the viewer is the partner</option>
+          <option>top-down view looking down on the scene</option>
+          <option>side profile of the intimate moment</option>
+          <option>from behind, focusing on her arched back and ass</option>
+          <option>shot on 85mm f/1.4 lens, shallow depth of field, tack-sharp eyes, creamy bokeh</option>
+          <option value="__custom__">Custom...</option>
+        </select>
+        <input type="text" class="custom-input" id="camera_custom" placeholder="Custom..." oninput="buildPrompt()">
+      </div>
+      <div class="field">
+        <label data-i18n="lbQuality">Quality / Realism</label>
+        <select id="quality" onchange="toggleCustom(this); buildPrompt()">
+          <option value="">—</option>
+          <option>Extremely detailed skin texture with fine pores and subtle sheen, ultra-realistic, razor-sharp focus, 8k, masterpiece</option>
+          <option>Photorealistic, highly detailed, sharp focus, 8k uhd, best quality</option>
+          <option>Hyper-realistic skin, subsurface scattering, intricate details, cinematic</option>
+          <option>Ultra-photorealistic, shot on medium format camera, natural skin imperfections, fine peach fuzz, realistic pores, 8k</option>
+          <option value="__custom__">Custom...</option>
+        </select>
+        <input type="text" class="custom-input" id="quality_custom" placeholder="Custom..." oninput="buildPrompt()">
+      </div>
+      <div class="field">
+        <label data-i18n="lbParams">Extra Parameters</label>
+        <input type="text" id="params" placeholder="e.g. --ar 3:4 --v 6 --style raw" oninput="buildPrompt()">
+      </div>
+    </div>
+  </div>
+
+  <!-- NEGATIVE -->
+  <div class="panel" id="panel-negative">
+    <div class="card">
+      <div class="card-header">
+        <h3 data-i18n="hNeg">Negative Prompt</h3>
+        <span class="badge">21+</span>
+        <button class="btn-clear-tab" onclick="clearTab('negative')" data-i18n="btnClearTab">Bersihkan tab</button>
+      </div>
+      <div class="section-note" data-i18n="noteNeg">Centang item yang ingin dimasukkan ke negative prompt, atau tulis manual di bawah.</div>
+      <div class="neg-grid" id="negGrid">
+        <label class="neg-item"><input type="checkbox" value="low quality, blurry" onchange="buildPrompt()"> low quality, blurry</label>
+        <label class="neg-item"><input type="checkbox" value="distorted anatomy" onchange="buildPrompt()"> distorted anatomy</label>
+        <label class="neg-item"><input type="checkbox" value="extra fingers, deformed hands" onchange="buildPrompt()"> extra fingers, deformed hands</label>
+        <label class="neg-item"><input type="checkbox" value="bad proportions" onchange="buildPrompt()"> bad proportions</label>
+        <label class="neg-item"><input type="checkbox" value="watermark, text, logo" onchange="buildPrompt()"> watermark, text, logo</label>
+        <label class="neg-item"><input type="checkbox" value="plastic skin" onchange="buildPrompt()"> plastic skin</label>
+        <label class="neg-item"><input type="checkbox" value="censored" onchange="buildPrompt()"> censored</label>
+        <label class="neg-item"><input type="checkbox" value="child, underage, loli, under 18" checked onchange="buildPrompt()"> child, underage, loli</label>
+        <label class="neg-item"><input type="checkbox" value="ugly, deformed face" onchange="buildPrompt()"> ugly, deformed face</label>
+        <label class="neg-item"><input type="checkbox" value="mutated hands, fused fingers" onchange="buildPrompt()"> mutated hands, fused fingers</label>
+        <label class="neg-item"><input type="checkbox" value="extra limbs" onchange="buildPrompt()"> extra limbs</label>
+        <label class="neg-item"><input type="checkbox" value="oversaturated, overexposed" onchange="buildPrompt()"> oversaturated, overexposed</label>
+      </div>
+      <div class="field">
+        <label data-i18n="lbNegCustom">Custom negative (opsional)</label>
+        <textarea id="negCustom" placeholder="Tambahan negative prompt..." oninput="buildPrompt()"></textarea>
+      </div>
+      <div class="field">
+        <label class="neg-item" style="margin-bottom:0;">
+          <input type="checkbox" id="negEnabled" checked onchange="buildPrompt()">
+          <span data-i18n="lbNegEnable">Sertakan Negative prompt di hasil</span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- PREVIEW -->
+  <div class="preview-section">
+    <div class="preview-header">
+      <h3 data-i18n="hPreview">Hasil Prompt</h3>
+      <div class="preview-meta">
+        <span id="charCounter">0 karakter</span>
+        <span id="wordCounter">0 kata</span>
+      </div>
+    </div>
+    <div class="preview-box">
+      <pre id="output" class="empty" data-i18n="previewEmpty">Pilih opsi di setiap tab. Prompt akan tersusun otomatis di sini.</pre>
+    </div>
+    <div class="preview-actions">
+      <button class="btn" id="copyBtn" onclick="copyPrompt()" data-i18n="btnCopy">Copy Prompt</button>
+      <button class="btn btn-secondary" onclick="copyPositiveOnly()" data-i18n="btnCopyPos">Copy Positive saja</button>
+      <button class="btn btn-danger" onclick="clearAll()" data-i18n="btnClearAll">Bersihkan</button>
+    </div>
+    <p class="tip" data-i18n="tip">Semua opsi bersifat 21+ / eksplisit. Titik hijau pada tab = sudah ada opsi terpilih. Gunakan tab Negative untuk hasil lebih bersih.</p>
+  </div>
+</div>
+
+<!-- Install banner -->
+<div class="install-banner" id="installBanner">
+  <p data-i18n="installText">Install Prompt Builder 21+ ke perangkatmu untuk akses cepat seperti aplikasi.</p>
+  <button class="btn-install" id="installBtn" data-i18n="installBtn">Install</button>
+  <button class="btn-dismiss" onclick="dismissInstall()" data-i18n="installDismiss">Nanti</button>
+</div>
+
+<div class="toast" id="toast">Prompt disalin</div>
+
+<script>
+/* ========== i18n ========== */
+const I18N = {
+  id: {
+    ageTitle: 'Area Konten Dewasa',
+    ageDesc: 'Prompter ini <strong>khusus untuk konten eksplisit / NSFW</strong> yang super realistis. Semua opsi di dalamnya bersifat dewasa.',
+    ageW1: 'Hanya untuk pengguna berusia <strong>21 tahun ke atas</strong>.',
+    ageW2: 'Konten mencakup pose, aksi, dan detail anatomi yang sangat eksplisit.',
+    ageW3: 'Pembuat prompter <strong>tidak bertanggung jawab</strong> atas penggunaan atau konsekuensi dari prompt yang dihasilkan.',
+    ageW4: 'Pengguna sepenuhnya bertanggung jawab atas prompt yang dibuat dan hasil generate-nya.',
+    ageCheck: 'Saya berusia 21 tahun atau lebih, memahami bahwa ini adalah konten dewasa eksplisit, dan menerima bahwa segala risiko menjadi tanggung jawab saya sendiri.',
+    ageEnter: 'Masuk ke Prompt Builder 21+',
+    ageFooter: 'Dengan masuk, Anda menyatakan telah membaca dan menyetujui pernyataan di atas.',
+    subtitle: 'Prompter eksplisit untuk generate gambar AI super realistis. Semua opsi 21+.',
+    btnRandom: 'Acak 21+',
+    presetLabel: 'Template 21+',
+    btnClearAll: 'Bersihkan Semua',
+    btnClearTab: 'Bersihkan tab',
+    tabSubject: 'Subject', tabFace: 'Face', tabBody: 'Body', tabPose: 'Pose',
+    tabPartner: 'Partner', tabAction: 'Aksi', tabSetting: 'Setting', tabLight: 'Light', tabNeg: 'Negative',
+    hSubject: 'Subject', hFace: 'Face & Expression', hBody: 'Body', hPose: 'Pose, Tangan & Kaki',
+    hPartner: 'Pasangan', hAction: 'Aksi Seksual', hSetting: 'Clothing & Background', hLight: 'Lighting & Camera', hNeg: 'Negative Prompt',
+    notePose: 'Semua opsi di sini bersifat eksplisit 21+. Pilih pose, tangan, dan kaki untuk detail super realistis.',
+    notePartner: 'Kosongkan jika ingin subjek solo.',
+    noteAction: 'Pilih aksi seksual eksplisit. Kombinasikan dengan Pose & Partner untuk hasil paling realistis.',
+    noteNeg: 'Centang item yang ingin dimasukkan ke negative prompt, atau tulis manual di bawah.',
+    lbEthnicity: 'Etnisitas', lbAge: 'Usia', lbGender: 'Gender', lbSkin: 'Kulit', lbHair: 'Rambut',
+    lbEyes: 'Mata', lbLips: 'Bibir & Ekspresi', lbBodyType: 'Body Type', lbBreasts: 'Breasts',
+    lbWaist: 'Waist & Hips', lbThighs: 'Thighs & Butt', lbPose: 'Pose Utama', lbHands: 'Posisi Tangan',
+    lbLegs: 'Posisi Kaki', lbTorso: 'Torso & Gaze', lbHasPartner: 'Ada Pasangan?', lbPartnerDesc: 'Deskripsi Pasangan',
+    lbPartnerPos: 'Posisi Pasangan', lbInteraction: 'Interaksi / Kissing', lbSexAct: 'Aksi Utama',
+    lbIntensity: 'Intensitas', lbAnatomy: 'Detail Anatomi', lbClothing: 'Pakaian', lbBackground: 'Background',
+    lbLighting: 'Lighting', lbCamera: 'Camera', lbQuality: 'Quality / Realism', lbParams: 'Extra Parameters',
+    lbNegCustom: 'Custom negative (opsional)', lbNegEnable: 'Sertakan Negative prompt di hasil',
+    hPreview: 'Hasil Prompt', previewEmpty: 'Pilih opsi di setiap tab. Prompt akan tersusun otomatis di sini.',
+    btnCopy: 'Copy Prompt', btnCopyPos: 'Copy Positive saja',
+    tip: 'Semua opsi bersifat 21+ / eksplisit. Titik hijau pada tab = sudah ada opsi terpilih. Gunakan tab Negative untuk hasil lebih bersih.',
+    installText: 'Install Prompt Builder 21+ ke perangkatmu untuk akses cepat seperti aplikasi.',
+    installBtn: 'Install', installDismiss: 'Nanti',
+    toastCopied: 'Prompt disalin ke clipboard', toastCleared: 'Semua opsi dibersihkan',
+    toastTabCleared: 'Tab dibersihkan', toastPreset: 'Preset diterapkan', toastRandom: 'Prompt acak 21+ siap',
+    charLabel: 'karakter', wordLabel: 'kata'
+  },
+  en: {
+    ageTitle: 'Adult Content Area',
+    ageDesc: 'This prompter is <strong>exclusively for explicit / NSFW content</strong> that is ultra-realistic. All options are adult.',
+    ageW1: 'Only for users aged <strong>21 and above</strong>.',
+    ageW2: 'Content includes poses, actions, and highly explicit anatomy details.',
+    ageW3: 'The creator is <strong>not responsible</strong> for any use or consequences of generated prompts.',
+    ageW4: 'Users are fully responsible for the prompts they create and the generated results.',
+    ageCheck: 'I am 21 years or older, understand this is explicit adult content, and accept that all risks are my own responsibility.',
+    ageEnter: 'Enter Prompt Builder 21+',
+    ageFooter: 'By entering, you confirm you have read and agree to the above.',
+    subtitle: 'Explicit prompter for ultra-realistic AI image generation. All options 21+.',
+    btnRandom: 'Random 21+',
+    presetLabel: 'Template 21+',
+    btnClearAll: 'Clear All',
+    btnClearTab: 'Clear tab',
+    tabSubject: 'Subject', tabFace: 'Face', tabBody: 'Body', tabPose: 'Pose',
+    tabPartner: 'Partner', tabAction: 'Action', tabSetting: 'Setting', tabLight: 'Light', tabNeg: 'Negative',
+    hSubject: 'Subject', hFace: 'Face & Expression', hBody: 'Body', hPose: 'Pose, Hands & Legs',
+    hPartner: 'Partner', hAction: 'Sexual Action', hSetting: 'Clothing & Background', hLight: 'Lighting & Camera', hNeg: 'Negative Prompt',
+    notePose: 'All options here are explicit 21+. Choose pose, hands, and legs for ultra-realistic detail.',
+    notePartner: 'Leave empty for solo subject.',
+    noteAction: 'Choose explicit sexual action. Combine with Pose & Partner for best realism.',
+    noteNeg: 'Check items to include in the negative prompt, or write custom below.',
+    lbEthnicity: 'Ethnicity', lbAge: 'Age', lbGender: 'Gender', lbSkin: 'Skin', lbHair: 'Hair',
+    lbEyes: 'Eyes', lbLips: 'Lips & Expression', lbBodyType: 'Body Type', lbBreasts: 'Breasts',
+    lbWaist: 'Waist & Hips', lbThighs: 'Thighs & Butt', lbPose: 'Main Pose', lbHands: 'Hand Position',
+    lbLegs: 'Leg Position', lbTorso: 'Torso & Gaze', lbHasPartner: 'Has Partner?', lbPartnerDesc: 'Partner Description',
+    lbPartnerPos: 'Partner Position', lbInteraction: 'Interaction / Kissing', lbSexAct: 'Main Action',
+    lbIntensity: 'Intensity', lbAnatomy: 'Anatomy Detail', lbClothing: 'Clothing', lbBackground: 'Background',
+    lbLighting: 'Lighting', lbCamera: 'Camera', lbQuality: 'Quality / Realism', lbParams: 'Extra Parameters',
+    lbNegCustom: 'Custom negative (optional)', lbNegEnable: 'Include Negative prompt in output',
+    hPreview: 'Prompt Result', previewEmpty: 'Select options in each tab. Prompt will build automatically here.',
+    btnCopy: 'Copy Prompt', btnCopyPos: 'Copy Positive only',
+    tip: 'All options are 21+ / explicit. Green dot on tab = options selected. Use Negative tab for cleaner results.',
+    installText: 'Install Prompt Builder 21+ on your device for quick app-like access.',
+    installBtn: 'Install', installDismiss: 'Later',
+    toastCopied: 'Prompt copied to clipboard', toastCleared: 'All options cleared',
+    toastTabCleared: 'Tab cleared', toastPreset: 'Preset applied', toastRandom: 'Random 21+ prompt ready',
+    charLabel: 'chars', wordLabel: 'words'
+  }
+};
+
+let lang = localStorage.getItem('pb21_lang') || 'id';
+
+function applyI18n() {
+  const t = I18N[lang] || I18N.id;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (t[key] !== undefined) el.innerHTML = t[key];
+  });
+  document.getElementById('langBtn').textContent = lang === 'id' ? 'ID / EN' : 'EN / ID';
+  // update counters labels via buildPrompt
+  buildPrompt();
+}
+
+function toggleLang() {
+  lang = lang === 'id' ? 'en' : 'id';
+  localStorage.setItem('pb21_lang', lang);
+  applyI18n();
+  showToast(lang === 'id' ? 'Bahasa: Indonesia' : 'Language: English');
+}
+
+/* ========== Age gate ========== */
+function toggleEnterBtn() {
+  document.getElementById('enterBtn').disabled = !document.getElementById('ageCheck').checked;
+}
+function enterApp() {
+  if (!document.getElementById('ageCheck').checked) return;
+  document.getElementById('ageGate').classList.add('hidden');
+  document.getElementById('mainApp').style.display = 'block';
+  try { sessionStorage.setItem('pb21_entered', '1'); } catch(e) {}
+}
+(function() {
+  try {
+    if (sessionStorage.getItem('pb21_entered') === '1') {
+      document.getElementById('ageGate').classList.add('hidden');
+      document.getElementById('mainApp').style.display = 'block';
+    }
+  } catch(e) {}
+})();
+
+/* ========== Tabs ========== */
+function switchTab(btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  const panel = document.getElementById('panel-' + btn.dataset.tab);
+  if (panel) panel.classList.add('active');
+}
+
+/* ========== Helpers ========== */
+function val(id) {
+  const el = document.getElementById(id);
+  if (!el) return '';
+  if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') return el.value.trim();
+  if (el.value === '__custom__') {
+    const c = document.getElementById(id + '_custom');
+    return c ? c.value.trim() : '';
+  }
+  return el.value.trim();
+}
+
+function toggleCustom(sel) {
+  const c = document.getElementById(sel.id + '_custom');
+  if (!c) return;
+  if (sel.value === '__custom__') {
+    c.classList.add('show');
+    setTimeout(() => c.focus(), 50);
+  } else {
+    c.classList.remove('show');
+  }
+}
+
+function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
+
+function filterOptions(input) {
+  const id = input.dataset.for;
+  const sel = document.getElementById(id);
+  if (!sel) return;
+  const q = input.value.toLowerCase().trim();
+  Array.from(sel.options).forEach(opt => {
+    if (opt.value === '' || opt.value === '__custom__') {
+      opt.classList.remove('hidden-opt');
+      return;
+    }
+    const text = (opt.textContent || opt.value || '').toLowerCase();
+    if (!q || text.includes(q)) opt.classList.remove('hidden-opt');
+    else opt.classList.add('hidden-opt');
+  });
+  // also filter optgroups visibility roughly
+  Array.from(sel.querySelectorAll('optgroup')).forEach(og => {
+    const visible = Array.from(og.querySelectorAll('option')).some(o => !o.classList.contains('hidden-opt'));
+    og.style.display = visible || !q ? '' : 'none';
+  });
+}
+
+/* ========== Fill indicators ========== */
+const TAB_FIELDS = {
+  subject: ['ethnicity', 'age', 'gender'],
+  face: ['skin', 'hair', 'eyes', 'lips'],
+  body: ['bodytype', 'breasts', 'waist', 'thighs'],
+  pose: ['pose', 'hands', 'legs', 'torso'],
+  partner: ['haspartner', 'partnerdesc', 'partnerpos'],
+  action: ['interaction', 'sexact', 'intensity', 'anatomy'],
+  setting: ['clothing', 'background'],
+  light: ['lighting', 'camera', 'quality', 'params'],
+  negative: ['negCustom']
+};
+
+function isFilled(id) {
+  const el = document.getElementById(id);
+  if (!el) return false;
+  if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') return !!el.value.trim();
+  if (el.value === '__custom__') {
+    const c = document.getElementById(id + '_custom');
+    return c && !!c.value.trim();
+  }
+  return !!el.value;
+}
+
+function updateFillIndicators() {
+  Object.keys(TAB_FIELDS).forEach(key => {
+    const tab = document.querySelector('.tab-btn[data-tab="' + key + '"]');
+    if (!tab) return;
+    let filled = TAB_FIELDS[key].some(isFilled);
+    if (key === 'negative') {
+      filled = filled || document.querySelectorAll('#negGrid input:checked').length > 0;
+    }
+    tab.classList.toggle('has-fill', filled);
+  });
+}
+
+/* ========== Build prompt ========== */
+function getNegativeText() {
+  if (!document.getElementById('negEnabled').checked) return '';
+  const parts = [];
+  document.querySelectorAll('#negGrid input:checked').forEach(cb => parts.push(cb.value));
+  const custom = val('negCustom');
+  if (custom) parts.push(custom);
+  return parts.length ? 'Negative prompt: ' + parts.join(', ') : '';
+}
+
+function buildPrompt() {
+  const parts = [];
+  const ethnicity = val('ethnicity');
+  const age = val('age');
+  const gender = val('gender') || 'woman';
+  const skin = val('skin');
+  const hair = val('hair');
+  const eyes = val('eyes');
+  const lips = val('lips');
+
+  let face = 'A stunningly beautiful';
+  if (age) face += ' ' + age;
+  if (ethnicity) face += ' ' + ethnicity;
+  face += ' ' + gender;
+  const fd = [skin, hair, eyes, lips].filter(Boolean);
+  if (fd.length) face += ', ' + fd.join(', ');
+  face += '. Highly detailed facial features.';
+  parts.push(face);
+
+  const bodytype = val('bodytype');
+  const breasts = val('breasts');
+  const waist = val('waist');
+  const thighs = val('thighs');
+  const bp = [breasts, waist, thighs].filter(Boolean);
+  if (bodytype || bp.length) {
+    let b = 'She has a';
+    if (bodytype) b += ' ' + bodytype;
+    if (bp.length) b += ': ' + bp.join(', ');
+    b += '.';
+    parts.push(b);
+  }
+
+  const pose = val('pose');
+  const hands = val('hands');
+  const legs = val('legs');
+  const torso = val('torso');
+  const pp = [];
+  if (pose) pp.push('She is ' + pose);
+  if (hands) pp.push(hands);
+  if (legs) pp.push(legs);
+  if (torso) pp.push(cap(torso));
+  if (pp.length) parts.push(pp.join('. ') + '.');
+
+  const haspartner = val('haspartner');
+  const partnerdesc = val('partnerdesc');
+  const partnerpos = val('partnerpos');
+  if (haspartner) {
+    let p = 'She is ' + haspartner;
+    if (partnerdesc) p += ': ' + partnerdesc;
+    if (partnerpos) p += ', who is ' + partnerpos;
+    p += '.';
+    parts.push(p);
+  }
+
+  const interaction = val('interaction');
+  const sexact = val('sexact');
+  const intensity = val('intensity');
+  const anatomy = val('anatomy');
+  if (interaction) parts.push('They are ' + interaction + '.');
+  if (sexact) parts.push(cap(sexact) + '.');
+  if (intensity) parts.push('The mood is ' + intensity + '.');
+  if (anatomy) parts.push(cap(anatomy) + '.');
+
+  const clothing = val('clothing');
+  const background = val('background');
+  if (clothing) parts.push('She is ' + clothing + '.');
+  if (background) parts.push(cap(background) + '.');
+
+  const lighting = val('lighting');
+  const camera = val('camera');
+  const quality = val('quality');
+  const params = val('params');
+  if (lighting) parts.push(lighting + '.');
+  if (camera) parts.push(cap(camera) + '.');
+  if (quality) parts.push(quality + '.');
+
+  let result = parts.join(' ').replace(/\s+/g, ' ').replace(/\s+\./g, '.').trim();
+  if (params) result += ' ' + params;
+
+  const neg = getNegativeText();
+  const full = neg ? result + '\n\n' + neg : result;
+
+  const out = document.getElementById('output');
+  const t = I18N[lang] || I18N.id;
+  if (result) {
+    out.textContent = full;
+    out.classList.remove('empty');
+  } else {
+    out.textContent = t.previewEmpty;
+    out.classList.add('empty');
+  }
+  const textForCount = result || '';
+  document.getElementById('charCounter').textContent = textForCount.length + ' ' + t.charLabel;
+  document.getElementById('wordCounter').textContent = textForCount.split(/\s+/).filter(Boolean).length + ' ' + t.wordLabel;
+  updateFillIndicators();
+}
+
+function getPositiveOnly() {
+  const out = document.getElementById('output').textContent;
+  if (!out || out.startsWith('Pilih') || out.startsWith('Select')) return '';
+  const idx = out.indexOf('\n\nNegative prompt:');
+  return idx >= 0 ? out.slice(0, idx).trim() : out.trim();
+}
+
+function copyPrompt() {
+  const t = document.getElementById('output').textContent;
+  if (!t || document.getElementById('output').classList.contains('empty')) return;
+  navigator.clipboard.writeText(t).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = '✓';
+    btn.classList.add('copied');
+    showToast((I18N[lang] || I18N.id).toastCopied);
+    setTimeout(() => {
+      btn.textContent = (I18N[lang] || I18N.id).btnCopy;
+      btn.classList.remove('copied');
+    }, 1500);
+  });
+}
+
+function copyPositiveOnly() {
+  const t = getPositiveOnly();
+  if (!t) return;
+  navigator.clipboard.writeText(t).then(() => {
+    showToast((I18N[lang] || I18N.id).toastCopied);
+  });
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => toast.classList.remove('show'), 2000);
+}
+
+function clearTab(tabKey) {
+  const fields = TAB_FIELDS[tabKey] || [];
+  fields.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (el.tagName === 'SELECT') {
+      el.value = '';
+      toggleCustom(el);
+    } else {
+      el.value = '';
+    }
+  });
+  if (tabKey === 'negative') {
+    document.querySelectorAll('#negGrid input').forEach(cb => { cb.checked = cb.value.includes('child'); });
+    document.getElementById('negEnabled').checked = true;
+  }
+  // clear search inputs in this panel
+  const panel = document.getElementById('panel-' + tabKey);
+  if (panel) panel.querySelectorAll('.opt-search').forEach(s => { s.value = ''; filterOptions(s); });
+  buildPrompt();
+  showToast((I18N[lang] || I18N.id).toastTabCleared);
+}
+
+function clearAll() {
+  const ps = document.getElementById('presetSelect');
+  if (ps) ps.value = '';
+  document.querySelectorAll('select').forEach(s => {
+    if (s.id === 'presetSelect') return;
+    s.value = '';
+    toggleCustom(s);
+  });
+  document.querySelectorAll('.custom-input, #params, #negCustom').forEach(i => {
+    i.value = '';
+    i.classList.remove('show');
+  });
+  document.querySelectorAll('.opt-search').forEach(s => { s.value = ''; filterOptions(s); });
+  document.querySelectorAll('#negGrid input').forEach(cb => { cb.checked = cb.value.includes('child'); });
+  document.getElementById('negEnabled').checked = true;
+  buildPrompt();
+  showToast((I18N[lang] || I18N.id).toastCleared);
+}
+
+function setSelect(id, value) {
+  const sel = document.getElementById(id);
+  if (!sel) return;
+  for (let o of sel.options) {
+    if (o.value === value || o.text === value) {
+      sel.value = o.value;
+      toggleCustom(sel);
+      return;
+    }
+  }
+  sel.value = '__custom__';
+  toggleCustom(sel);
+  const c = document.getElementById(id + '_custom');
+  if (c) c.value = value;
+}
+
+function onPresetChange(sel) {
+  if (!sel.value) return;
+  fillExample(sel.value);
+}
+
+function commonQuality() {
+  setSelect('quality', 'Extremely detailed skin texture with fine pores and subtle sheen, ultra-realistic, razor-sharp focus, 8k, masterpiece');
+  setSelect('lighting', 'Soft cinematic lighting from slightly above and in front, gentle highlights tracing her curves and cleavage');
+}
+
+function fillExample(type) {
+  clearAll();
+  const map = {
+    realistic: () => {
+      setSelect('ethnicity', 'Caucasian / White'); setSelect('age', 'early 20s'); setSelect('gender', 'woman');
+      setSelect('skin', 'porcelain-fair creamy skin with soft natural flush on cheeks and chest');
+      setSelect('hair', 'long silky wavy honey-blonde hair cascading over her shoulders and draping across one breast');
+      setSelect('eyes', 'piercing blue-green eyes with long thick lashes and a glassy intimate gaze');
+      setSelect('lips', 'full plump soft lips slightly parted in a subtle teasing smile');
+      setSelect('bodytype', 'perfect voluptuous hourglass figure');
+      setSelect('breasts', 'medium-firm and naturally perky 34C breasts with soft realistic shape and subtle weight');
+      setSelect('waist', 'extremely narrow waist that flares into wide feminine hips');
+      setSelect('thighs', 'thick soft plush thighs and a round firm inviting butt');
+      setSelect('pose', 'kneeling in a perfect seiza pose');
+      setSelect('hands', 'both hands rest flat on the floor in front of her');
+      setSelect('legs', 'both knees planted on the floor, buttocks on her heels, thighs pressed close');
+      setSelect('torso', 'torso upright with subtle arch in lower back, chest pushed forward toward the viewer');
+      setSelect('clothing', 'completely nude'); setSelect('background', 'on a clean white surface');
+      setSelect('camera', 'shot on 85mm f/1.4 lens, shallow depth of field, tack-sharp eyes, creamy bokeh');
+      setSelect('lighting', 'Ultra-realistic photographic lighting with natural falloff and subtle ambient occlusion');
+      setSelect('quality', 'Ultra-photorealistic, shot on medium format camera, natural skin imperfections, fine peach fuzz, realistic pores, 8k');
+      document.getElementById('params').value = '--ar 3:4 --style raw --stylize 50';
+    },
+    seiza: () => {
+      setSelect('ethnicity', 'Caucasian / White'); setSelect('age', 'early 20s');
+      setSelect('skin', 'porcelain-fair creamy skin with soft natural flush on cheeks and chest');
+      setSelect('hair', 'long silky wavy honey-blonde hair cascading over her shoulders and draping across one breast');
+      setSelect('eyes', 'piercing blue-green eyes with long thick lashes and a glassy intimate gaze');
+      setSelect('lips', 'full plump soft lips slightly parted in a subtle teasing smile');
+      setSelect('bodytype', 'perfect voluptuous hourglass figure');
+      setSelect('breasts', 'medium-firm and naturally perky 34C breasts with soft realistic shape and subtle weight');
+      setSelect('pose', 'kneeling in a perfect seiza pose');
+      setSelect('hands', 'both hands rest flat on the floor in front of her');
+      setSelect('legs', 'both knees planted on the floor, buttocks on her heels, thighs pressed close');
+      setSelect('torso', 'torso upright with subtle arch in lower back, chest pushed forward toward the viewer');
+      setSelect('clothing', 'completely nude'); setSelect('background', 'on a clean white surface');
+      setSelect('camera', 'intimate full-body from a slightly low angle emphasizing figure and eye contact');
+      commonQuality();
+    },
+    cleavage: () => {
+      setSelect('ethnicity', 'Latina / Hispanic'); setSelect('age', 'mid 20s');
+      setSelect('skin', 'medium tan skin with golden undertone');
+      setSelect('hair', 'long voluminous curly red hair');
+      setSelect('eyes', 'warm amber eyes rolling back slightly from pleasure');
+      setSelect('lips', 'lips parted, tongue tip visible, pure arousal expression');
+      setSelect('bodytype', 'curvy and soft full-figured body');
+      setSelect('breasts', 'large full heavy breasts (DD) with natural soft hang and deep cleavage');
+      setSelect('pose', 'kneeling upright on both knees');
+      setSelect('hands', 'both hands firmly cupping and squeezing her breasts, pushing them together');
+      setSelect('legs', 'knees wide apart while sitting, feet flat on the floor');
+      setSelect('anatomy', 'nipples hard and erect, breasts glistening with sweat');
+      setSelect('clothing', 'completely nude'); setSelect('background', 'in a dimly lit bedroom with warm lamps');
+      setSelect('camera', 'close-up upper body focusing on face, breasts and expression');
+      commonQuality();
+    },
+    spread: () => {
+      setSelect('ethnicity', 'Caucasian / White'); setSelect('age', 'early 20s');
+      setSelect('skin', 'porcelain-fair creamy skin with soft natural flush on cheeks and chest');
+      setSelect('hair', 'messy sex-hair, slightly damp and tousled');
+      setSelect('eyes', 'piercing blue-green eyes with long thick lashes and a glassy intimate gaze');
+      setSelect('lips', 'mouth open in a silent moan, eyes half-closed');
+      setSelect('bodytype', 'perfect voluptuous hourglass figure');
+      setSelect('breasts', 'medium-firm and naturally perky 34C breasts with soft realistic shape and subtle weight');
+      setSelect('pose', 'lying on her back with legs bent');
+      setSelect('hands', 'two fingers spreading her pussy lips open for the viewer');
+      setSelect('legs', 'legs spread wide open, fully exposing herself to the viewer');
+      setSelect('torso', 'lying back, chest rising with heavy breathing, eyes locked on viewer');
+      setSelect('anatomy', 'detailed realistic wet pussy, natural juices visible, labia slightly parted');
+      setSelect('intensity', 'completely overwhelmed by pleasure, eyes rolled back');
+      setSelect('clothing', 'completely nude'); setSelect('background', 'on a soft bed with messy white sheets');
+      setSelect('camera', 'point-of-view shot as if the viewer is the partner');
+      commonQuality();
+    },
+    orgasm: () => {
+      setSelect('ethnicity', 'Caucasian / White'); setSelect('age', 'early 20s');
+      setSelect('skin', 'porcelain-fair creamy skin with soft natural flush on cheeks and chest');
+      setSelect('hair', 'messy sex-hair, slightly damp and tousled');
+      setSelect('eyes', 'ice-blue eyes half-closed in pleasure');
+      setSelect('lips', 'mouth open in a silent moan, eyes half-closed');
+      setSelect('bodytype', 'perfect voluptuous hourglass figure');
+      setSelect('pose', 'lying on her back with legs bent');
+      setSelect('hands', 'one hand between her legs, fingers pressing against her pussy');
+      setSelect('legs', 'legs spread wide open, fully exposing herself to the viewer');
+      setSelect('intensity', 'completely overwhelmed by pleasure, eyes rolled back');
+      setSelect('anatomy', 'detailed wet folds, aroused and swollen labia, glistening juices');
+      setSelect('clothing', 'completely nude'); setSelect('background', 'on a soft bed with messy white sheets');
+      setSelect('camera', 'point-of-view shot as if the viewer is the partner');
+      setSelect('lighting', 'Dim moody bedroom lighting, warm and intimate');
+      commonQuality();
+    },
+    selftouch: () => {
+      setSelect('ethnicity', 'East Asian (Japanese/Korean/Chinese)'); setSelect('age', 'early 20s');
+      setSelect('skin', 'fair skin with light freckles and rosy cheeks');
+      setSelect('hair', 'long straight raven-black hair flowing down her back');
+      setSelect('eyes', 'deep brown eyes with soft seductive heavy-lidded look');
+      setSelect('lips', 'biting lower lip hard, trying to hold back a moan');
+      setSelect('bodytype', 'petite and delicate frame');
+      setSelect('breasts', 'small perky A-cup breasts');
+      setSelect('pose', 'sitting on the edge of a bed with legs slightly open');
+      setSelect('hands', 'two fingers spreading her pussy lips open for the viewer');
+      setSelect('legs', 'legs spread slightly apart, giving a teasing view');
+      setSelect('intensity', 'playful and teasing, she is smirking while touching herself');
+      setSelect('anatomy', 'detailed realistic wet pussy, natural juices visible, labia slightly parted');
+      setSelect('clothing', 'lingerie half-removed, one breast fully exposed');
+      setSelect('background', 'on a soft bed with messy white sheets');
+      setSelect('camera', 'close-up upper body focusing on face, breasts and expression');
+      commonQuality();
+    },
+    allfours: () => {
+      setSelect('ethnicity', 'Southeast Asian (Indonesian/Thai/Vietnamese)'); setSelect('age', 'early 20s');
+      setSelect('skin', 'light olive skin with warm undertone and soft glow');
+      setSelect('hair', 'long platinum blonde hair with soft waves');
+      setSelect('lips', 'biting lower lip hard, trying to hold back a moan');
+      setSelect('bodytype', 'slim athletic figure with toned muscles');
+      setSelect('breasts', 'medium B-cup breasts with gentle slope');
+      setSelect('pose', 'on all fours, back arched');
+      setSelect('hands', 'both hands gripping and spreading her own ass cheeks');
+      setSelect('legs', 'on all fours, knees wide, back arched, ass presented to the viewer');
+      setSelect('torso', 'back strongly arched, breasts thrust out, looking at the viewer over her shoulder');
+      setSelect('anatomy', 'asshole slightly visible while cheeks are spread');
+      setSelect('clothing', 'completely nude'); setSelect('background', 'on a soft bed with messy white sheets');
+      setSelect('camera', 'from behind, focusing on her arched back and ass');
+      commonQuality();
+    },
+    tease: () => {
+      setSelect('ethnicity', 'East Asian (Japanese/Korean/Chinese)'); setSelect('age', 'early 20s');
+      setSelect('skin', 'fair skin with light freckles and rosy cheeks');
+      setSelect('hair', 'long straight raven-black hair flowing down her back');
+      setSelect('eyes', 'deep brown eyes with soft seductive heavy-lidded look');
+      setSelect('lips', 'seductive half-smile with heavy-lidded bedroom eyes');
+      setSelect('bodytype', 'petite and delicate frame');
+      setSelect('breasts', 'small perky A-cup breasts');
+      setSelect('pose', 'sitting on the edge of a bed with legs slightly open');
+      setSelect('legs', 'legs spread slightly apart, giving a teasing view');
+      setSelect('torso', 'torso leaning forward, creating deeper cleavage and inviting posture');
+      setSelect('clothing', 'lingerie half-removed, one breast fully exposed');
+      setSelect('background', 'on a soft bed with messy white sheets');
+      setSelect('camera', 'close-up upper body focusing on face, breasts and expression');
+      setSelect('intensity', 'playful and teasing, she is smirking while touching herself');
+      commonQuality();
+    },
+    couple: () => {
+      setSelect('ethnicity', 'Caucasian / White'); setSelect('age', 'early 20s');
+      setSelect('skin', 'porcelain-fair creamy skin with soft natural flush on cheeks and chest');
+      setSelect('hair', 'long silky wavy honey-blonde hair cascading over her shoulders and draping across one breast');
+      setSelect('eyes', 'deep brown eyes with soft seductive heavy-lidded look');
+      setSelect('lips', 'lips wet and shiny, slightly swollen from kissing');
+      setSelect('bodytype', 'perfect voluptuous hourglass figure');
+      setSelect('breasts', 'medium-firm and naturally perky 34C breasts with soft realistic shape and subtle weight');
+      setSelect('pose', 'lying on her back with legs bent');
+      setSelect('haspartner', 'with a male partner');
+      setSelect('partnerdesc', 'a handsome muscular man in his late 20s with short dark hair and strong jawline');
+      setSelect('partnerpos', 'lying on top of her, looking down into her eyes');
+      setSelect('interaction', 'deep French kiss, saliva slightly visible');
+      setSelect('sexact', 'missionary, her legs wrapped tightly around his waist');
+      setSelect('intensity', 'passionate and intense, heavy breathing and soft moans');
+      setSelect('clothing', 'completely nude'); setSelect('background', 'on a soft bed with messy white sheets');
+      setSelect('camera', 'medium shot showing full bodies interacting');
+      commonQuality();
+    },
+    doggy: () => {
+      setSelect('ethnicity', 'Caucasian / White'); setSelect('age', 'early 20s');
+      setSelect('skin', 'porcelain-fair creamy skin with soft natural flush on cheeks and chest');
+      setSelect('hair', 'messy sex-hair, slightly damp and tousled');
+      setSelect('eyes', 'ice-blue eyes half-closed in pleasure');
+      setSelect('lips', 'mouth open in a silent moan, eyes half-closed');
+      setSelect('bodytype', 'perfect voluptuous hourglass figure');
+      setSelect('breasts', 'medium-firm and naturally perky 34C breasts with soft realistic shape and subtle weight');
+      setSelect('pose', 'on all fours, back arched');
+      setSelect('hands', 'hands gripping the sheets tightly, knuckles white from intensity');
+      setSelect('legs', 'on all fours, knees wide, back arched, ass presented to the viewer');
+      setSelect('haspartner', 'with a male partner');
+      setSelect('partnerdesc', 'a tall athletic man with broad shoulders and arm tattoos');
+      setSelect('partnerpos', 'behind her while she is on all fours');
+      setSelect('sexact', 'doggy style, she is on all fours while he thrusts from behind');
+      setSelect('intensity', 'raw and rough, strong grip marks on her skin');
+      setSelect('anatomy', 'vaginal penetration fully visible, stretching detail, wetness on shaft');
+      setSelect('clothing', 'completely nude'); setSelect('background', 'on a soft bed with messy white sheets');
+      setSelect('camera', 'from behind, focusing on her arched back and ass');
+      commonQuality();
+    },
+    cowgirl: () => {
+      setSelect('ethnicity', 'Caucasian / White'); setSelect('age', 'early 20s');
+      setSelect('skin', 'porcelain-fair creamy skin with soft natural flush on cheeks and chest');
+      setSelect('hair', 'messy sex-hair, slightly damp and tousled');
+      setSelect('eyes', 'ice-blue eyes half-closed in pleasure');
+      setSelect('lips', 'mouth open in a silent moan, eyes half-closed');
+      setSelect('bodytype', 'perfect voluptuous hourglass figure');
+      setSelect('breasts', 'medium-firm and naturally perky 34C breasts with soft realistic shape and subtle weight');
+      setSelect('haspartner', 'with a male partner');
+      setSelect('partnerdesc', 'a handsome muscular man in his late 20s with short dark hair and strong jawline');
+      setSelect('partnerpos', 'beneath her while she straddles him');
+      setSelect('sexact', 'cowgirl, she is on top riding him, breasts bouncing');
+      setSelect('intensity', 'passionate and intense, heavy breathing and soft moans');
+      setSelect('anatomy', 'vaginal penetration fully visible, stretching detail, wetness on shaft');
+      setSelect('clothing', 'completely nude'); setSelect('background', 'on a soft bed with messy white sheets');
+      setSelect('camera', 'medium shot showing full bodies interacting');
+      commonQuality();
+    },
+    wall: () => {
+      setSelect('ethnicity', 'Latina / Hispanic'); setSelect('age', 'mid 20s');
+      setSelect('skin', 'medium tan skin with golden undertone');
+      setSelect('hair', 'long voluminous curly red hair');
+      setSelect('eyes', 'warm amber eyes rolling back slightly from pleasure');
+      setSelect('lips', 'O-shaped mouth as if gasping in pleasure');
+      setSelect('bodytype', 'curvy and soft full-figured body');
+      setSelect('breasts', 'large full heavy breasts (DD) with natural soft hang and deep cleavage');
+      setSelect('pose', 'leaning forward against a wall, ass pushed out');
+      setSelect('hands', 'both wrists pinned above her head as if held down');
+      setSelect('haspartner', 'with a male partner');
+      setSelect('partnerdesc', 'a handsome muscular man in his late 20s with short dark hair and strong jawline');
+      setSelect('partnerpos', 'standing behind her, pressing his body against her back');
+      setSelect('sexact', 'he is holding her up against the wall while penetrating her');
+      setSelect('intensity', 'dominant and controlling, firm hands and commanding presence');
+      setSelect('interaction', 'partner pinning her wrists while kissing her');
+      setSelect('anatomy', 'body covered in a light sheen of sweat, skin flushed, post-orgasm glow');
+      setSelect('clothing', 'skirt hiked up around her waist, no panties');
+      setSelect('background', 'against a wall in a modern apartment');
+      setSelect('camera', 'side profile of the intimate moment');
+      commonQuality();
+    },
+    pronebone: () => {
+      setSelect('ethnicity', 'Caucasian / White'); setSelect('age', 'early 20s');
+      setSelect('skin', 'porcelain-fair creamy skin with soft natural flush on cheeks and chest');
+      setSelect('hair', 'messy sex-hair, slightly damp and tousled');
+      setSelect('eyes', 'ice-blue eyes half-closed in pleasure');
+      setSelect('lips', 'mouth open in a silent moan, eyes half-closed');
+      setSelect('bodytype', 'perfect voluptuous hourglass figure');
+      setSelect('pose', 'lying on her stomach, ass raised slightly');
+      setSelect('hands', 'hands gripping the sheets tightly, knuckles white from intensity');
+      setSelect('haspartner', 'with a male partner');
+      setSelect('partnerdesc', 'a tall athletic man with broad shoulders and arm tattoos');
+      setSelect('partnerpos', 'behind her while she is on all fours');
+      setSelect('sexact', 'prone bone, she is lying flat on her stomach while he enters from behind');
+      setSelect('intensity', 'raw and rough, strong grip marks on her skin');
+      setSelect('anatomy', 'vaginal penetration fully visible, stretching detail, wetness on shaft');
+      setSelect('clothing', 'completely nude'); setSelect('background', 'on a soft bed with messy white sheets');
+      setSelect('camera', 'from behind, focusing on her arched back and ass');
+      commonQuality();
+    },
+    matingpress: () => {
+      setSelect('ethnicity', 'Caucasian / White'); setSelect('age', 'early 20s');
+      setSelect('skin', 'porcelain-fair creamy skin with soft natural flush on cheeks and chest');
+      setSelect('hair', 'messy sex-hair, slightly damp and tousled');
+      setSelect('eyes', 'ice-blue eyes half-closed in pleasure');
+      setSelect('lips', 'O-shaped mouth as if gasping in pleasure');
+      setSelect('bodytype', 'perfect voluptuous hourglass figure');
+      setSelect('pose', 'lying on her back with legs bent');
+      setSelect('hands', 'both wrists pinned above her head as if held down');
+      setSelect('legs', 'lying on her back, legs raised and held open by her hands');
+      setSelect('haspartner', 'with a male partner');
+      setSelect('partnerdesc', 'a handsome muscular man in his late 20s with short dark hair and strong jawline');
+      setSelect('partnerpos', 'lying on top of her, looking down into her eyes');
+      setSelect('sexact', 'mating press, legs pinned back, deep passionate penetration');
+      setSelect('intensity', 'forceful and intense, bodies colliding with urgency');
+      setSelect('anatomy', 'vaginal penetration fully visible, stretching detail, wetness on shaft');
+      setSelect('clothing', 'completely nude'); setSelect('background', 'on a soft bed with messy white sheets');
+      setSelect('camera', 'medium shot showing full bodies interacting');
+      commonQuality();
+    },
+    oral: () => {
+      setSelect('ethnicity', 'East Asian (Japanese/Korean/Chinese)'); setSelect('age', 'early 20s');
+      setSelect('skin', 'fair skin with light freckles and rosy cheeks');
+      setSelect('hair', 'long straight raven-black hair flowing down her back');
+      setSelect('eyes', 'bright emerald eyes looking up with pure lust');
+      setSelect('lips', 'O-shaped mouth as if gasping in pleasure');
+      setSelect('bodytype', 'petite and delicate frame');
+      setSelect('pose', 'kneeling upright on both knees');
+      setSelect('haspartner', 'with a male partner');
+      setSelect('partnerdesc', 'a fit man with short blonde hair and intense hungry eyes');
+      setSelect('partnerpos', 'standing in front of her while she kneels');
+      setSelect('sexact', 'she is on her knees giving him oral sex, looking up with teary eyes');
+      setSelect('intensity', 'submissive and obedient, looking up for approval');
+      setSelect('anatomy', 'oral contact detailed, tongue and lips around the shaft, saliva strings');
+      setSelect('clothing', 'completely nude'); setSelect('background', 'in a dimly lit bedroom with warm lamps');
+      setSelect('camera', 'close-up upper body focusing on face, breasts and expression');
+      commonQuality();
+    },
+    cunnilingus: () => {
+      setSelect('ethnicity', 'East Asian (Japanese/Korean/Chinese)'); setSelect('age', 'early 20s');
+      setSelect('skin', 'fair skin with light freckles and rosy cheeks');
+      setSelect('hair', 'long straight raven-black hair flowing down her back');
+      setSelect('eyes', 'ice-blue eyes half-closed in pleasure');
+      setSelect('lips', 'mouth open in a silent moan, eyes half-closed');
+      setSelect('bodytype', 'petite and delicate frame');
+      setSelect('pose', 'lying on her back with legs bent');
+      setSelect('legs', 'legs spread wide open, fully exposing herself to the viewer');
+      setSelect('haspartner', 'with a male partner');
+      setSelect('partnerdesc', 'a fit man with short blonde hair and intense hungry eyes');
+      setSelect('partnerpos', 'kneeling between her spread legs');
+      setSelect('sexact', 'partner performing oral sex on her, her head tilted back in pure pleasure');
+      setSelect('intensity', 'completely overwhelmed by pleasure, eyes rolled back');
+      setSelect('anatomy', 'detailed realistic wet pussy, natural juices visible, labia slightly parted');
+      setSelect('clothing', 'completely nude'); setSelect('background', 'on a soft bed with messy white sheets');
+      setSelect('camera', 'point-of-view shot as if the viewer is the partner');
+      commonQuality();
+    },
+    sixtynine: () => {
+      setSelect('ethnicity', 'Caucasian / White'); setSelect('age', 'early 20s');
+      setSelect('skin', 'porcelain-fair creamy skin with soft natural flush on cheeks and chest');
+      setSelect('hair', 'messy sex-hair, slightly damp and tousled');
+      setSelect('lips', 'O-shaped mouth as if gasping in pleasure');
+      setSelect('bodytype', 'perfect voluptuous hourglass figure');
+      setSelect('pose', 'lying on her side, one leg raised');
+      setSelect('haspartner', 'with a male partner');
+      setSelect('partnerdesc', 'a handsome muscular man in his late 20s with short dark hair and strong jawline');
+      setSelect('sexact', '69 position, both giving oral at the same time');
+      setSelect('intensity', 'hungry and eager, desperate for more contact');
+      setSelect('anatomy', 'oral contact detailed, tongue and lips around the shaft, saliva strings');
+      setSelect('clothing', 'completely nude'); setSelect('background', 'on a soft bed with messy white sheets');
+      setSelect('camera', 'side profile of the intimate moment');
+      commonQuality();
+    },
+    rough: () => {
+      setSelect('ethnicity', 'Caucasian / White'); setSelect('age', 'early 20s');
+      setSelect('skin', 'porcelain-fair creamy skin with soft natural flush on cheeks and chest');
+      setSelect('hair', 'messy sex-hair, slightly damp and tousled');
+      setSelect('eyes', 'piercing blue-green eyes with long thick lashes and a glassy intimate gaze');
+      setSelect('lips', 'mouth open in a silent moan, eyes half-closed');
+      setSelect('bodytype', 'perfect voluptuous hourglass figure');
+      setSelect('pose', 'on all fours, back arched');
+      setSelect('hands', 'hands gripping the sheets tightly, knuckles white from intensity');
+      setSelect('legs', 'on all fours, knees wide, back arched, ass presented to the viewer');
+      setSelect('haspartner', 'with a male partner');
+      setSelect('partnerdesc', 'a tall athletic man with broad shoulders and arm tattoos');
+      setSelect('partnerpos', 'behind her while she is on all fours');
+      setSelect('sexact', 'doggy style, she is on all fours while he thrusts from behind');
+      setSelect('intensity', 'raw and rough, strong grip marks on her skin');
+      setSelect('anatomy', 'vaginal penetration fully visible, stretching detail, wetness on shaft');
+      setSelect('clothing', 'completely nude'); setSelect('background', 'on a soft bed with messy white sheets');
+      setSelect('camera', 'from behind, focusing on her arched back and ass');
+      commonQuality();
+    },
+    hairpull: () => {
+      setSelect('ethnicity', 'Latina / Hispanic'); setSelect('age', 'mid 20s');
+      setSelect('skin', 'medium tan skin with golden undertone');
+      setSelect('hair', 'long voluminous curly red hair');
+      setSelect('eyes', 'warm amber eyes rolling back slightly from pleasure');
+      setSelect('lips', 'mouth open in a silent moan, eyes half-closed');
+      setSelect('bodytype', 'curvy and soft full-figured body');
+      setSelect('pose', 'on all fours, back arched');
+      setSelect('hands', 'hands gripping the sheets tightly, knuckles white from intensity');
+      setSelect('legs', 'on all fours, knees wide, back arched, ass presented to the viewer');
+      setSelect('haspartner', 'with a male partner');
+      setSelect('partnerdesc', 'a tall athletic man with broad shoulders and arm tattoos');
+      setSelect('partnerpos', 'behind her while she is on all fours');
+      setSelect('sexact', 'doggy style, she is on all fours while he thrusts from behind');
+      setSelect('intensity', 'dominant and controlling, firm hands and commanding presence');
+      setSelect('anatomy', 'vaginal penetration fully visible, stretching detail, wetness on shaft');
+      setSelect('clothing', 'completely nude'); setSelect('background', 'on a soft bed with messy white sheets');
+      setSelect('camera', 'from behind, focusing on her arched back and ass');
+      commonQuality();
+    },
+    choke: () => {
+      setSelect('ethnicity', 'Caucasian / White'); setSelect('age', 'early 20s');
+      setSelect('skin', 'porcelain-fair creamy skin with soft natural flush on cheeks and chest');
+      setSelect('hair', 'messy sex-hair, slightly damp and tousled');
+      setSelect('eyes', 'piercing blue-green eyes with long thick lashes and a glassy intimate gaze');
+      setSelect('lips', 'O-shaped mouth as if gasping in pleasure');
+      setSelect('bodytype', 'perfect voluptuous hourglass figure');
+      setSelect('pose', 'lying on her back with legs bent');
+      setSelect('hands', 'rough grip on her throat (light), other hand on her hip');
+      setSelect('haspartner', 'with a male partner');
+      setSelect('partnerdesc', 'a handsome muscular man in his late 20s with short dark hair and strong jawline');
+      setSelect('partnerpos', 'lying on top of her, looking down into her eyes');
+      setSelect('sexact', 'missionary, her legs wrapped tightly around his waist');
+      setSelect('intensity', 'dominant and controlling, firm hands and commanding presence');
+      setSelect('anatomy', 'body covered in a light sheen of sweat, skin flushed, post-orgasm glow');
+      setSelect('clothing', 'completely nude'); setSelect('background', 'on a soft bed with messy white sheets');
+      setSelect('camera', 'close-up upper body focusing on face, breasts and expression');
+      commonQuality();
+    },
+    bound: () => {
+      setSelect('ethnicity', 'Caucasian / White'); setSelect('age', 'early 20s');
+      setSelect('skin', 'porcelain-fair creamy skin with soft natural flush on cheeks and chest');
+      setSelect('hair', 'messy sex-hair, slightly damp and tousled');
+      setSelect('lips', 'biting lower lip hard, trying to hold back a moan');
+      setSelect('bodytype', 'perfect voluptuous hourglass figure');
+      setSelect('pose', 'lying on her back with legs bent');
+      setSelect('hands', 'both wrists pinned above her head as if held down');
+      setSelect('legs', 'legs spread wide open, fully exposing herself to the viewer');
+      setSelect('haspartner', 'with a male partner');
+      setSelect('partnerdesc', 'a tall athletic man with broad shoulders and arm tattoos');
+      setSelect('partnerpos', 'lying on top of her, looking down into her eyes');
+      setSelect('sexact', 'missionary, her legs wrapped tightly around his waist');
+      setSelect('intensity', 'submissive and obedient, looking up for approval');
+      setSelect('anatomy', 'vaginal penetration fully visible, stretching detail, wetness on shaft');
+      setSelect('clothing', 'completely nude'); setSelect('background', 'on a soft bed with messy white sheets');
+      setSelect('camera', 'point-of-view shot as if the viewer is the partner');
+      commonQuality();
+    },
+    passionate: () => {
+      setSelect('ethnicity', 'Caucasian / White'); setSelect('age', 'early 20s');
+      setSelect('skin', 'porcelain-fair creamy skin with soft natural flush on cheeks and chest');
+      setSelect('hair', 'long silky wavy honey-blonde hair cascading over her shoulders and draping across one breast');
+      setSelect('eyes', 'deep brown eyes with soft seductive heavy-lidded look');
+      setSelect('lips', 'lips wet and shiny, slightly swollen from kissing');
+      setSelect('bodytype', 'perfect voluptuous hourglass figure');
+      setSelect('breasts', 'medium-firm and naturally perky 34C breasts with soft realistic shape and subtle weight');
+      setSelect('pose', 'sitting on the edge of a bed with legs slightly open');
+      setSelect('haspartner', 'with a male partner');
+      setSelect('partnerdesc', 'a handsome muscular man in his late 20s with short dark hair and strong jawline');
+      setSelect('partnerpos', 'sitting behind her, one hand on her breast, the other between her legs');
+      setSelect('interaction', 'deep French kiss, saliva slightly visible');
+      setSelect('intensity', 'passionate and intense, heavy breathing and soft moans');
+      setSelect('clothing', 'wearing only sheer lingerie pulled to the side');
+      setSelect('background', 'on a soft bed with messy white sheets');
+      setSelect('camera', 'close-up upper body focusing on face, breasts and expression');
+      commonQuality();
+    },
+    softgrab: () => {
+      setSelect('ethnicity', 'East Asian (Japanese/Korean/Chinese)'); setSelect('age', 'early 20s');
+      setSelect('skin', 'fair skin with light freckles and rosy cheeks');
+      setSelect('hair', 'long straight raven-black hair flowing down her back');
+      setSelect('eyes', 'deep brown eyes with soft seductive heavy-lidded look');
+      setSelect('lips', 'full plump soft lips slightly parted in a subtle teasing smile');
+      setSelect('bodytype', 'petite and delicate frame');
+      setSelect('breasts', 'small perky A-cup breasts');
+      setSelect('pose', 'kneeling upright on both knees');
+      setSelect('hands', 'both hands softly cupping her breasts, gentle squeeze');
+      setSelect('legs', 'knees wide apart while sitting, feet flat on the floor');
+      setSelect('clothing', 'wearing only sheer lingerie pulled to the side');
+      setSelect('background', 'in a dimly lit bedroom with warm lamps');
+      setSelect('camera', 'intimate full-body from a slightly low angle emphasizing figure and eye contact');
+      commonQuality();
+    },
+    bedroom: () => {
+      setSelect('ethnicity', 'Latina / Hispanic'); setSelect('age', 'mid 20s');
+      setSelect('skin', 'medium tan skin with golden undertone');
+      setSelect('hair', 'shoulder-length wavy chestnut brown hair');
+      setSelect('eyes', 'warm amber eyes rolling back slightly from pleasure');
+      setSelect('lips', 'seductive half-smile with heavy-lidded bedroom eyes');
+      setSelect('bodytype', 'curvy and soft full-figured body');
+      setSelect('breasts', 'large full heavy breasts (DD) with natural soft hang and deep cleavage');
+      setSelect('pose', 'lying on her side, one leg raised');
+      setSelect('hands', 'one hand softly squeezing her breast, the other lightly teasing her nipple');
+      setSelect('legs', 'lying on her side, top leg raised high in the air');
+      setSelect('clothing', 'lingerie half-removed, one breast fully exposed');
+      setSelect('background', 'on a soft bed with messy white sheets');
+      setSelect('camera', 'close-up upper body focusing on face, breasts and expression');
+      setSelect('lighting', 'Dim moody bedroom lighting, warm and intimate');
+      commonQuality();
+    },
+    afterglow: () => {
+      setSelect('ethnicity', 'Caucasian / White'); setSelect('age', 'early 20s');
+      setSelect('skin', 'porcelain-fair creamy skin with soft natural flush on cheeks and chest');
+      setSelect('hair', 'messy sex-hair, slightly damp and tousled');
+      setSelect('eyes', 'deep brown eyes with soft seductive heavy-lidded look');
+      setSelect('lips', 'lips wet and shiny, slightly swollen from kissing');
+      setSelect('bodytype', 'perfect voluptuous hourglass figure');
+      setSelect('breasts', 'medium-firm and naturally perky 34C breasts with soft realistic shape and subtle weight');
+      setSelect('pose', 'lying on her back with legs bent');
+      setSelect('intensity', 'spent and glowing after climax, soft satisfied smile');
+      setSelect('anatomy', 'body covered in a light sheen of sweat, skin flushed, post-orgasm glow');
+      setSelect('clothing', 'completely nude'); setSelect('background', 'on a soft bed with messy white sheets');
+      setSelect('camera', 'intimate full-body from a slightly low angle emphasizing figure and eye contact');
+      setSelect('lighting', 'Dim moody bedroom lighting, warm and intimate');
+      commonQuality();
+    }
+  };
+  if (map[type]) map[type]();
+  buildPrompt();
+  showToast((I18N[lang] || I18N.id).toastPreset + ': ' + type);
+}
+
+function randomize() {
+  const picks = {
+    ethnicity: ['Caucasian / White','East Asian (Japanese/Korean/Chinese)','Latina / Hispanic','Southeast Asian (Indonesian/Thai/Vietnamese)'],
+    age: ['early 20s','mid 20s'],
+    gender: ['woman'],
+    skin: ['porcelain-fair creamy skin with soft natural flush on cheeks and chest','fair skin with light freckles and rosy cheeks','medium tan skin with golden undertone'],
+    hair: ['long silky wavy honey-blonde hair cascading over her shoulders and draping across one breast','messy sex-hair, slightly damp and tousled','long straight raven-black hair flowing down her back'],
+    eyes: ['piercing blue-green eyes with long thick lashes and a glassy intimate gaze','deep brown eyes with soft seductive heavy-lidded look','ice-blue eyes half-closed in pleasure'],
+    lips: ['lips parted, tongue tip visible, pure arousal expression','mouth open in a silent moan, eyes half-closed','biting lower lip hard, trying to hold back a moan'],
+    bodytype: ['perfect voluptuous hourglass figure','curvy and soft full-figured body'],
+    breasts: ['medium-firm and naturally perky 34C breasts with soft realistic shape and subtle weight','large full heavy breasts (DD) with natural soft hang and deep cleavage'],
+    waist: ['extremely narrow waist that flares into wide feminine hips'],
+    thighs: ['thick soft plush thighs and a round firm inviting butt'],
+    pose: ['kneeling in a perfect seiza pose','on all fours, back arched','lying on her back with legs bent','sitting on the edge of a bed with legs slightly open'],
+    hands: ['both hands firmly cupping and squeezing her breasts, pushing them together','two fingers spreading her pussy lips open for the viewer','one hand between her legs, fingers pressing against her pussy','both hands gripping and spreading her own ass cheeks'],
+    legs: ['legs spread wide open, fully exposing herself to the viewer','on all fours, knees wide, back arched, ass presented to the viewer','legs spread slightly apart, giving a teasing view'],
+    torso: ['torso upright with subtle arch in lower back, chest pushed forward toward the viewer','back strongly arched, breasts thrust out, looking at the viewer over her shoulder'],
+    clothing: ['completely nude'],
+    background: ['on a soft bed with messy white sheets','in a dimly lit bedroom with warm lamps'],
+    lighting: ['Soft cinematic lighting from slightly above and in front, gentle highlights tracing her curves and cleavage'],
+    camera: ['intimate full-body from a slightly low angle emphasizing figure and eye contact','point-of-view shot as if the viewer is the partner'],
+    quality: ['Extremely detailed skin texture with fine pores and subtle sheen, ultra-realistic, razor-sharp focus, 8k, masterpiece'],
+    intensity: ['passionate and intense, heavy breathing and soft moans','completely overwhelmed by pleasure, eyes rolled back'],
+    anatomy: ['detailed realistic wet pussy, natural juices visible, labia slightly parted','detailed wet folds, aroused and swollen labia, glistening juices']
+  };
+  clearAll();
+  Object.keys(picks).forEach(id => {
+    const arr = picks[id];
+    setSelect(id, arr[Math.floor(Math.random() * arr.length)]);
+  });
+  if (Math.random() > 0.45) {
+    setSelect('haspartner', 'with a male partner');
+    setSelect('partnerdesc', 'a handsome muscular man in his late 20s with short dark hair and strong jawline');
+    const acts = ['doggy style, she is on all fours while he thrusts from behind','missionary, her legs wrapped tightly around his waist','she is on her knees giving him oral sex, looking up with teary eyes'];
+    setSelect('sexact', acts[Math.floor(Math.random() * acts.length)]);
+  }
+  buildPrompt();
+  showToast((I18N[lang] || I18N.id).toastRandom);
+}
+
+/* ========== PWA install ========== */
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  if (!localStorage.getItem('pb21_install_dismissed')) {
+    document.getElementById('installBanner').classList.add('show');
+  }
+});
+
+document.getElementById('installBtn').addEventListener('click', async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  document.getElementById('installBanner').classList.remove('show');
+});
+
+function dismissInstall() {
+  document.getElementById('installBanner').classList.remove('show');
+  localStorage.setItem('pb21_install_dismissed', '1');
+}
+
+window.addEventListener('appinstalled', () => {
+  document.getElementById('installBanner').classList.remove('show');
+  deferredPrompt = null;
+});
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
+
+/* init */
+applyI18n();
+buildPrompt();
+</script>
+</body>
+</html>
